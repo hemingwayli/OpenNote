@@ -38,9 +38,10 @@ def write_source_archive() -> None:
             continue
         # 已跟踪文件不受 Git 忽略规则影响，仍须阻止本机配置进入公开包。
         name = Path(relative).name
-        local_configuration = relative.startswith('.local/') or relative in {
-            '.codex/config.toml', '.vscode/settings.json',
-        }
+        local_configuration = relative.startswith(('.local/', '.codex/')) or (
+            relative == '.vscode/settings.json'
+            or name.lower() in {'agents.md', 'agent.md', 'agents.override.md'}
+        )
         credentials = name == '.env' or (
             name.startswith('.env.') and not name.endswith('.example')
         )

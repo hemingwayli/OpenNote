@@ -1,8 +1,8 @@
 # 本机工具、依赖与产物不作为应用数据。
 .local/
-AGENTS.override.md
-AGENT.md
 AGENTS.md
+AGENT.md
+AGENTS.override.md
 # 实际工具配置仅用于本机，公开可移植示例。
 /.codex/*
 /.vscode/settings.json

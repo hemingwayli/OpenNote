@@ -102,6 +102,15 @@ class OpenSourceAuditTests(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn('private-or-generated-file', {item['rule'] for item in report['findings']})
 
+    def test_force_tracked_private_instructions_are_blocked(self):
+        path = self.root / 'AGENTS.md'
+        path.write_text('本地私人执行规则。\n', encoding='utf-8')
+        self.git('add', '.')
+        self.git('add', '-f', 'AGENTS.md')
+        code, report = self.invoke('--selection', 'index')
+        self.assertEqual(code, 1)
+        self.assertIn('private-or-generated-file', {item['rule'] for item in report['findings']})
+
     def test_deleted_historical_secret_still_blocks_final_commit(self):
         path = self.root / '.env'
         path.write_text('ghp_' + 'R' * 40, encoding='utf-8')

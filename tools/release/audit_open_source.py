@@ -72,11 +72,11 @@ def private_file(relative: str) -> bool:
     relative = relative.lower()
     path = PurePosixPath(relative)
     name = path.name.lower()
-    return (relative.startswith(('.local/', 'build/', 'dist/', '.dart_tool/', 'backups/'))
-            or relative in {'.codex/config.toml', '.vscode/settings.json'}
+    return (relative.startswith(('.local/', '.codex/', 'build/', 'dist/', '.dart_tool/', 'backups/'))
+            or relative == '.vscode/settings.json'
             or name == '.env' or (name.startswith('.env.') and not name.endswith('.example'))
             or path.suffix.lower() in {'.pem', '.key', '.pdb', '.db', '.sqlite', '.log'}
-            or name in {'id_rsa', 'id_ed25519', 'native_assets.json'}
+            or name in {'id_rsa', 'id_ed25519', 'native_assets.json', 'agents.md', 'agent.md', 'agents.override.md'}
             or name.endswith(('.backup.zip', '.db-wal', '.db-shm')))
 
 

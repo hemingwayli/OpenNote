@@ -139,6 +139,13 @@ class SourceArchiveTest(unittest.TestCase):
         self._git('add', '--', relative)
         self._assert_validation_rejection(before, relative)
 
+    def test_force_tracked_private_instructions_preserve_previous_archive(self) -> None:
+        before = self._create_valid_archive()
+        relative = 'AGENTS.md'
+        (self.root / relative).write_text('本地私人执行规则。\n', encoding='utf-8')
+        self._git('add', '-f', '--', relative)
+        self._assert_validation_rejection(before, relative)
+
     def test_same_bytes_with_wrong_declared_size_are_rejected(self) -> None:
         before = self._create_valid_archive()
         entry = self.approved['files'][0]
