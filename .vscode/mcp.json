@@ -1,0 +1,15 @@
+{
+  "servers": {
+    "dart-flutter": {
+      "type": "stdio",
+      "command": "${config:dart.flutterSdkPath}/bin/cache/dart-sdk/bin/dart.exe",
+      "args": ["mcp-server", "--flutter-sdk", "${config:dart.flutterSdkPath}", "--enable", "cli", "--enable", "flutter_app_lifecycle"],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "CMAKE_BUILD_PARALLEL_LEVEL": "1",
+        "FLUTTER_ROOT": "${config:dart.flutterSdkPath}",
+        "PYTHONUTF8": "1"
+      }
+    }
+  }
+}

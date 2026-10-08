@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "version": "0.1.0",
+  "recordType": "verification-contract",
+  "databaseVersion": 11,
+  "backupFormatVersion": 1,
+  "methodology": "docs/validation.md",
+  "testingGuide": "docs/testing.md",
+  "samplePolicy": "仅使用自产或来源清单明确声明的样本；私有运行证据不随源码分发",
+  "resultPolicy": "每次验收绑定实际源码、产物、环境和范围；此清单不声明某个安装包已通过验收"
+}

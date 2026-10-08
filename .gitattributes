@@ -1,0 +1,15 @@
+# 文档、图像和字体按原字节保存，防止换行转换破坏资产校验值。
+*.pdf binary
+*.epub binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.tif binary
+*.tiff binary
+*.bmp binary
+*.ico binary
+*.docx binary
+*.otf binary
+*.ttf binary

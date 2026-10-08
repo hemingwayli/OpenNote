@@ -1,0 +1,52 @@
+{
+  "formatVersion": 1,
+  "model": "PP-OCRv6_small",
+  "backend": "onnxruntime-cpu",
+  "onnxruntime": "1.21.0",
+  "opencv": "4.11.0",
+  "yamlCpp": "0.8.0",
+  "artifacts": [
+    {
+      "name": "PP-OCRv6_small_det_onnx_infer.tar",
+      "url": "https://paddle-model-ecology.bj.bcebos.com/paddlex/official_inference_model/paddle3.0.0/PP-OCRv6_small_det_onnx_infer.tar",
+      "sha256": "d218f6fbf0f1c23d2161bd6ac7f5eaa6104fa89955c09290497e31008e2618e4",
+      "size": 9891840,
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "PP-OCRv6_small_rec_onnx_infer.tar",
+      "url": "https://paddle-model-ecology.bj.bcebos.com/paddlex/official_inference_model/paddle3.0.0/PP-OCRv6_small_rec_onnx_infer.tar",
+      "sha256": "d267ab077a44a0eedb1ea8f8c542d263f211de8e9d7a029bf9fcfff7e5a88fb1",
+      "size": 21319680,
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "onnxruntime-win-x64-1.21.0.zip",
+      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-win-x64-1.21.0.zip",
+      "sha256": "5c07bb2805cd666dda75fa9bfa60e75f2f90d478b952298dd9d55c00740d81bf",
+      "size": 72311515,
+      "license": "MIT"
+    },
+    {
+      "name": "opencv-4.11.0-windows.exe",
+      "url": "https://github.com/opencv/opencv/releases/download/4.11.0/opencv-4.11.0-windows.exe",
+      "sha256": "7c9d1c0b70db1b1952cc815252fced9a07f51267563cf3eaa1674d734c49b8e4",
+      "size": 185089042,
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "yaml-cpp-0.8.0.tar.gz",
+      "url": "https://codeload.github.com/jbeder/yaml-cpp/tar.gz/refs/tags/0.8.0",
+      "sha256": "fbe74bbdcee21d656715688706da3c8becfd946d92cd44705cc6098bb23b3a16",
+      "size": 1017151,
+      "license": "MIT"
+    },
+    {
+      "name": "PaddleOCR-LICENSE.txt",
+      "url": "https://raw.githubusercontent.com/PaddlePaddle/PaddleOCR/main/LICENSE",
+      "sha256": "3840c5c0c61c294264d2dd77b8777be6ddd90121ef4e0e64abcd22edea581d6e",
+      "size": 11376,
+      "license": "Apache-2.0"
+    }
+  ]
+}

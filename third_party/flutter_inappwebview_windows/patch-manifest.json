@@ -1,0 +1,40 @@
+{
+  "version": "0.6.0-opennote-lifecycle-3",
+  "files": [
+    {
+      "path": "lib/flutter_inappwebview_windows.dart",
+      "sha256": "84a37b21e96399ab401e7f73e3b70b2e89c87c50de46bf0551312feacda19b1e",
+      "upstreamSha256": "5e70d8d8fbf5d74b1c12d1be4f2eacc49cbeab98a963196cd68b9075a0994ad3"
+    },
+    {
+      "path": "lib/src/in_app_webview/custom_platform_view.dart",
+      "sha256": "c08eaabb455a8c91624ba3ff5aee86896c6a4a152840911a393fac9f2c4e84cf",
+      "upstreamSha256": "5c663b24c4e090b696ff2117017b5192eae9bfa32d9ee04498e2a72bbf62e158"
+    },
+    {
+      "path": "lib/src/webview_environment/webview_environment.dart",
+      "sha256": "c9afe14b23eadbc3de411139f262976dfb116148d99001701a520e43221f8329",
+      "upstreamSha256": "181dcf3a9f8715716d790216019de2a7c01843210bd5c401fc2e0f906dc1fb6b"
+    },
+    {
+      "path": "windows/in_app_webview/in_app_webview.cpp",
+      "sha256": "1f6a8591a3ee0a8893347947309a9e11e7675a42123f49ad7ee5ebe2c7eefd85",
+      "upstreamSha256": "4cb00551207fc4f3b5f9642c2c6a79c50f89c86b2c859129c99c12d524ddeb18"
+    },
+    {
+      "path": "windows/in_app_webview/in_app_webview.h",
+      "sha256": "2a9ea162dfd078ce70bf4c941aaec7a10d1556e1bd389cbe41657170029f6735",
+      "upstreamSha256": "1914455fadf8484d3e22ff745adfc412176d6adad87b629f253d7c1d82969919"
+    },
+    {
+      "path": "windows/in_app_webview/in_app_webview_manager.cpp",
+      "sha256": "2aa7501bd89d183a898f2889695f8ee08cdf056f77c4a13f4c723e3ed5ffa387",
+      "upstreamSha256": "eefc7b984c208696b3a3a34f99b0ddc11779fb7470009ebbabcfd274421d77ab"
+    },
+    {
+      "path": "windows/in_app_webview/in_app_webview_manager.h",
+      "sha256": "2b25b456fdecbb88e48bd4f50e55279923abdbac411758546d1fe0fc7f539b69",
+      "upstreamSha256": "0470bebe55abaa760fd804e01ab7e8d99bebe5aa3757b368929c68cd0081c0b7"
+    }
+  ]
+}

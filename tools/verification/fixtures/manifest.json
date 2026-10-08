@@ -1,0 +1,25 @@
+{
+  "generator": "generate_capacity_pdf.py",
+  "pymupdfVersion": "1.28.2",
+  "content": "本项目生成的中英印刷文字，非外部版权书籍",
+  "file": "long-book-1000.pdf",
+  "sha256": "60d426d1390da3099dd700e6d6f0ab58b66dd78253e14daaf051d4b51ce7ffcc",
+  "bytes": 516695,
+  "actualPages": 1000,
+  "sampleInk": [
+    {
+      "page": 1,
+      "darkPixels": 10618
+    },
+    {
+      "page": 500,
+      "darkPixels": 10636
+    },
+    {
+      "page": 1000,
+      "darkPixels": 10630
+    }
+  ],
+  "firstTextCharacters": 1131,
+  "lastTextCharacters": 1134
+}

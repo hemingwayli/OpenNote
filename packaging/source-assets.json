@@ -1,0 +1,834 @@
+{
+  "schemaVersion": 1,
+  "purpose": "源码 ZIP 二进制文档与视觉资产的固定白名单；打包须逐项验证路径、大小与 SHA-256，未列入者拒绝纳入。",
+  "assetExtensions": [
+    ".pdf",
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp",
+    ".gif",
+    ".bmp",
+    ".tif",
+    ".tiff",
+    ".ico",
+    ".docx",
+    ".otf",
+    ".epub"
+  ],
+  "excludedPrefixes": [
+    ".local/"
+  ],
+  "policy": "用户提供的原书、用户资料库、私有报告与 .local 资产不属于可分发源码资产。上游公共领域声明仅对应列出的少量单页样本；不允许自动扩大到整本书。新增或变更资产必须先明确来源和分发依据，再更新固定清单。",
+  "files": [
+    {
+      "path": "assets/licenses/Microsoft-VC-Runtime.docx",
+      "size": 39553,
+      "sha256": "08651651a7602fc7c0e2763de0fde1ff9f868df2780597cd1775ee9d6441c783",
+      "origin": "license-document",
+      "license": "Microsoft Visual C++ V14 Redistributable and Runtime license terms",
+      "sourceStatement": "微软官方下载的运行库许可原件，作为第三方许可记录保留；不改用本项目 Apache 2.0 授权。",
+      "sourceReferences": [
+        "tools/prepare_vc_license.py",
+        "https://visualstudio.microsoft.com/license-terms/vs2026-ga-visualcpp-v14-redist-runtime/",
+        "https://visualstudio.microsoft.com/wp-content/uploads/2025/10/Visual-C-V14-License-Redistributable_and_Runtime_ENU.docx"
+      ]
+    },
+    {
+      "path": "test/ocr/fixtures/bilingual.png",
+      "size": 80146,
+      "sha256": "0226516f7d7bab1c0319d8f305c90692481ec60818cbd2daae0d24cfc6cd6975",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "本项目 OCR 验证脚本将自造的六行中英文印刷文字渲染为测试位图；不含外部书页。",
+      "sourceReferences": [
+        "tools/ocr/validate_native.py",
+        "test/ocr/fixtures/expected.json"
+      ]
+    },
+    {
+      "path": "test/ocr/fixtures/real-books/austen-page11.jpg",
+      "size": 697305,
+      "sha256": "d1ad36084511946ce54cbf893d61d59f1c48deb848d19f0346bf566321ba0a36",
+      "origin": "public-domain",
+      "license": "Commons PD-scan / PD-old-100-expired",
+      "sourceStatement": "Jane Austen《Pride and Prejudice》1817 第三版第 11 页机械扫描缩略图；上游标注 PD-scan / PD-old-100-expired，来自 Internet Archive；仅保存此单页回归样本。",
+      "sourceReferences": [
+        "tools/ocr/real-book-samples.json",
+        "test/ocr/fixtures/real-books/README.md",
+        "https://commons.wikimedia.org/wiki/File:Austen_-_Pride_and_Prejudice,_third_edition,_1817.djvu?page=11"
+      ]
+    },
+    {
+      "path": "test/ocr/fixtures/real-books/chinese-page20-image-only.pdf",
+      "size": 465825,
+      "sha256": "7ac6b9a7976ade4acb09e4e585fa5afe4f02a2aab1f8223113bb85934bc4329c",
+      "origin": "public-domain",
+      "license": "Commons PD-scan / PD-China",
+      "sourceStatement": "直接嵌入下列同源《共和國教科書本國史》第 20 页 JPEG 字节的单页纯图像 PDF，不重新压缩或添加原生文字；公共领域来源声明沿用该扫描页。",
+      "sourceReferences": [
+        "tools/ocr/real-book-samples.json",
+        "test/ocr/fixtures/real-books/README.md",
+        "https://commons.wikimedia.org/wiki/File:NLC416-17jh001772-107310_%E5%85%B1%E5%92%8C%E5%9C%8B%E6%95%99%E7%A7%91%E6%9B%B8%E6%9C%AC%E5%9C%8B%E5%8F%B2.pdf?page=20",
+        "tools/ocr/validate_real_books.py"
+      ],
+      "derivedFrom": [
+        "test/ocr/fixtures/real-books/chinese-page20.jpg"
+      ]
+    },
+    {
+      "path": "test/ocr/fixtures/real-books/chinese-page20.jpg",
+      "size": 465077,
+      "sha256": "586a6640f563a30991f43f208df5c07b8be7c20c370ed5a5eb067c2aaa116cd0",
+      "origin": "public-domain",
+      "license": "Commons PD-scan / PD-China",
+      "sourceStatement": "趙玉森編纂《共和國教科書本國史》1920 年商务印书馆出版物第 20 页机械扫描缩略图；上游标注 PD-scan / PD-China，来自国家图书馆；仅保存此单页回归样本。",
+      "sourceReferences": [
+        "tools/ocr/real-book-samples.json",
+        "test/ocr/fixtures/real-books/README.md",
+        "https://commons.wikimedia.org/wiki/File:NLC416-17jh001772-107310_%E5%85%B1%E5%92%8C%E5%9C%8B%E6%95%99%E7%A7%91%E6%9B%B8%E6%9C%AC%E5%9C%8B%E5%8F%B2.pdf?page=20"
+      ]
+    },
+    {
+      "path": "test/ocr/fixtures/real-books/hillier-page110.jpg",
+      "size": 862186,
+      "sha256": "eb1292f32bca400c50a7b279291c1d424cc094c13295f742f8804d2ecc6b3a05",
+      "origin": "public-domain",
+      "license": "Commons PD-old / Public Domain Mark",
+      "sourceStatement": "Sir Walter Hillier《The Chinese language and how to learn it》1921 年出版物第 110 页机械扫描缩略图；上游标注 PD-old / Public Domain Mark，来自 Internet Archive；仅保存此单页回归样本。",
+      "sourceReferences": [
+        "tools/ocr/real-book-samples.json",
+        "test/ocr/fixtures/real-books/README.md",
+        "https://commons.wikimedia.org/wiki/File:The_Chinese_language_and_how_to_learn_it.djvu?page=110"
+      ]
+    },
+    {
+      "path": "test/ocr/fixtures/scanned_rotated.pdf",
+      "size": 69772,
+      "sha256": "737df4988f5c04af2b23cc79819b42b9fedc2042d5905f12e7fca5a5b65f0546",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "本项目 OCR 验证脚本将自造的六行中英文印刷文字位图封装为四种旋转、非零 CropBox、UserUnit 2 的测试 PDF；不含外部书页。",
+      "sourceReferences": [
+        "tools/ocr/validate_native.py",
+        "test/ocr/fixtures/expected.json"
+      ],
+      "derivedFrom": [
+        "test/ocr/fixtures/bilingual.png"
+      ]
+    },
+    {
+      "path": "tools/fixtures/pdf/compressed_geometry.pdf",
+      "size": 3117,
+      "sha256": "92aeed29300afb8bbcb0535d8428cd9192827ebc75c3c353c2582d2769c3da92",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "本项目脚本生成的原生、扫描、混合、旋转裁切或压缩对象流 PDF 测试资料，文字与图像由项目自造；哈希与生成清单一致。",
+      "sourceReferences": [
+        "tools/fixtures/generate_pdf_fixtures.py",
+        "tools/fixtures/pdf/manifest.json"
+      ]
+    },
+    {
+      "path": "tools/fixtures/pdf/mixed.pdf",
+      "size": 5765690,
+      "sha256": "b1d0f236f3e02fb5261a1a2bbb95eb785fc520d16c45ed1a0f6914b8cd257f54",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "本项目脚本生成的原生、扫描、混合、旋转裁切或压缩对象流 PDF 测试资料，文字与图像由项目自造；哈希与生成清单一致。",
+      "sourceReferences": [
+        "tools/fixtures/generate_pdf_fixtures.py",
+        "tools/fixtures/pdf/manifest.json"
+      ]
+    },
+    {
+      "path": "tools/fixtures/pdf/native.pdf",
+      "size": 2862,
+      "sha256": "db1736ee7a1e41cea645265c0025013fb6335e0b50f70cf24e1c3eb6b5819341",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "本项目脚本生成的原生、扫描、混合、旋转裁切或压缩对象流 PDF 测试资料，文字与图像由项目自造；哈希与生成清单一致。",
+      "sourceReferences": [
+        "tools/fixtures/generate_pdf_fixtures.py",
+        "tools/fixtures/pdf/manifest.json"
+      ]
+    },
+    {
+      "path": "tools/fixtures/pdf/rotate_cropbox.pdf",
+      "size": 4128,
+      "sha256": "5b9ab143a9bdfd1b0a3b963d8bbfca023b687752451f7fc4b433ddc8eecb8f41",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "本项目脚本生成的原生、扫描、混合、旋转裁切或压缩对象流 PDF 测试资料，文字与图像由项目自造；哈希与生成清单一致。",
+      "sourceReferences": [
+        "tools/fixtures/generate_pdf_fixtures.py",
+        "tools/fixtures/pdf/manifest.json"
+      ]
+    },
+    {
+      "path": "tools/fixtures/pdf/scanned.pdf",
+      "size": 5763568,
+      "sha256": "3fd09c0d5cde55b080844d64884a34a633857acd994550e0b09c36121067ad76",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "本项目脚本生成的原生、扫描、混合、旋转裁切或压缩对象流 PDF 测试资料，文字与图像由项目自造；哈希与生成清单一致。",
+      "sourceReferences": [
+        "tools/fixtures/generate_pdf_fixtures.py",
+        "tools/fixtures/pdf/manifest.json"
+      ]
+    },
+    {
+      "path": "tools/verification/fixtures/long-book-1000.pdf",
+      "size": 516695,
+      "sha256": "60d426d1390da3099dd700e6d6f0ab58b66dd78253e14daaf051d4b51ce7ffcc",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "本项目容量验证脚本生成的 1000 页中英印刷文字 PDF，非外部版权书籍；哈希与容量 fixture 清单一致。",
+      "sourceReferences": [
+        "tools/verification/generate_capacity_pdf.py",
+        "tools/verification/fixtures/manifest.json"
+      ]
+    },
+    {
+      "path": "windows/runner/resources/app_icon.ico",
+      "size": 26470,
+      "sha256": "0b2d0028d1f211c5ea5e79b3030d76bd18350b390ef098b3f4b3525eab1969c3",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "本项目脚本绘制的自有书页图标，包含多尺寸 ICO 图像；不使用外部图标资产。",
+      "sourceReferences": [
+        "tools/generate_app_icon.py"
+      ]
+    },
+    {
+      "path": "tools/fixtures/pdf/links.pdf",
+      "size": 4296,
+      "sha256": "8d25e640e5c5eef785b72328f5f9fc5ec296526ebf28dcaecd1b9b51a09e3655",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "本项目脚本生成的两页原生文字 PDF，包含真实文内、URI 及失败目标链接回归区域；正文、图形和页面链接均由项目自造，不含外部书页。",
+      "sourceReferences": [
+        "tools/fixtures/generate_pdf_fixtures.py",
+        "tools/fixtures/pdf/manifest.json"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/empty-1280x720.png",
+      "size": 30607,
+      "sha256": "a1ce9baa2a20945f8e6837023ed2e3129ea80d6ce74bbce4b5fa74961b10ff42",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/empty-1920x1080-at150.png",
+      "size": 50481,
+      "sha256": "941d3c8dd6ab59ef2ef88f3a9b3472cdf19f1e5beda6cbbcaee4893fd7f8b66d",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/canvas-1280x720.png",
+      "size": 138670,
+      "sha256": "7a4d51a16a6a54f71393be576445bf8b1eeefe6e1a0509091f049795c2a251f7",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/canvas-1920x1080-at150.png",
+      "size": 257830,
+      "sha256": "970df41918d465636427c3f1ddfb714c550aeb1afc44fac25e17d72c5b020c0c",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/editor-1280x720.png",
+      "size": 141026,
+      "sha256": "65fa317bb10259f457e9c26278f592211d1e32d52f81498ea39a5ac82a4a4247",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/editor-1920x1080-at150.png",
+      "size": 262530,
+      "sha256": "43551fa861a557a83f099eca2667e5a90e6ef4a95242ae7f43d507ae90d8a55e",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/outline-1280x720.png",
+      "size": 123594,
+      "sha256": "40204563519e6877323bc5a08d1f6b8d0c940f807fc889059edcc2351e0b3fc8",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/outline-1920x1080-at150.png",
+      "size": 230393,
+      "sha256": "6e83509d85895d283ad2fa7a6ea5898121dfd97994e844303167dc00d23b6b35",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/empty-1920x1080.png",
+      "size": 36532,
+      "sha256": "afe2b8863af82694f5bc17dc4b65ce445cd96504b274b6e92460662510d026bc",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/canvas-1920x1080.png",
+      "size": 270290,
+      "sha256": "417c8fbb7d54eb389184187e5e3a42b1321646da05a6e5a079ccbbe981a9130a",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/editor-1920x1080.png",
+      "size": 262226,
+      "sha256": "c283965ff9f75d1378f0be4d9a9c7ae4ad104c41509c7267a7df12543e0135d1",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/outline-1920x1080.png",
+      "size": 234222,
+      "sha256": "a3f2c9b79ad3f90235cb21e3d0c03206ab04a32a5dfeff0e2fcbe9f66f9cb8d9",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/cards-1920x1080.png",
+      "size": 234999,
+      "sha256": "1b4dae3499b1b287fc2780dac0ee3401231fd8d4fe6ab8cb2041941aaf9e0720",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/cards-1280x720.png",
+      "size": 124428,
+      "sha256": "716e89ad6c0e67fc232a691cfa857d11cfd69a331a67f42328ef562ad0496c45",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/cards-1920x1080-at150.png",
+      "size": 232303,
+      "sha256": "fe6fcddff11f468fd7c4a2699c1f9950999543555c28332b83679c96f68ae725",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/search-1920x1080.png",
+      "size": 206636,
+      "sha256": "55a92f44314b41f8e9c2d6f5fd97073f0a4332cd649b28e5b83253426309bfc5",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/search-1280x720.png",
+      "size": 76061,
+      "sha256": "c6979644b0936bc933f08151b89d3ffb7c8fe08d6755309c79d53d5335f40483",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/search-1920x1080-at150.png",
+      "size": 131145,
+      "sha256": "4df1f0dcbf4fdaf9fcef796cbda2a4a8e661e82eca112e7982609e60fd58e78c",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/naming-1920x1080.png",
+      "size": 226888,
+      "sha256": "e2a5660ae5165155bbf1a49229c40d795a1c925c3712cc8cc0243a8712165569",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/naming-1280x720.png",
+      "size": 115322,
+      "sha256": "e6e84525829975369c8462aaa217442191d2387f1e5690875e3ed8b10c6416b1",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/naming-1920x1080-at150.png",
+      "size": 210581,
+      "sha256": "12d0583166d1035e21d1409eb4ad5934ec3d56fdfaa7a167caaff68f46226acd",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/trash-1920x1080.png",
+      "size": 183842,
+      "sha256": "994e3e88e04fb569648949a17509484c8e7b121047df3301ce55bc4f67d28475",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/trash-1280x720.png",
+      "size": 54495,
+      "sha256": "b7e03e70bfbf0642a91f1a13c9f7529f6c6c57796960f8160faa4bd282c44e02",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/trash-1920x1080-at150.png",
+      "size": 95431,
+      "sha256": "3a331ea927107fd7d97bd84465f8471e67bfef13504acc5b53a31423c35ba23f",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "tools/fixtures/pdf/ui-reading.pdf",
+      "size": 8943,
+      "sha256": "584a3a0ccdaef666d62ec185ad24c20f207eb9b9661b42decf087183dde25a1a",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "OpenNote 自撰阅读文章，由 PyMuPDF 生成的 UI 验收 PDF，不含用户资料、外部文章或分发字体文件。",
+      "sourceReferences": [
+        "tools/fixtures/generate_ui_reading.py"
+      ]
+    },
+    {
+      "path": "assets/fonts/source-han-sans/SourceHanSansCN-Regular.otf",
+      "size": 8429224,
+      "sha256": "e2bc8a2e7f37474b774fff8db758681ece40bb6947a90d571bce9dd60671a8e4",
+      "origin": "upstream-font",
+      "license": "OFL-1.1",
+      "sourceStatement": "Adobe 官方简体中文思源黑体，原字节随应用分发；保留版权声明与 SIL OFL 1.1，不修改字体。",
+      "sourceReferences": [
+        "https://raw.githubusercontent.com/adobe-fonts/source-han-sans/a4f7cf94edfb9d7ffbdfc4841de276358bd7e0f2/SubsetOTF/CN/SourceHanSansCN-Regular.otf",
+        "assets/fonts/source-han-sans/LICENSE.txt",
+        "assets/fonts/source-han-sans/provenance.json"
+      ]
+    },
+    {
+      "path": "assets/fonts/source-han-sans/SourceHanSansCN-Medium.otf",
+      "size": 8406556,
+      "sha256": "a94e558a2fe972bee4f46bce0843abff37063fd68c33f1e7d9058f6f09432b01",
+      "origin": "upstream-font",
+      "license": "OFL-1.1",
+      "sourceStatement": "Adobe 官方简体中文思源黑体，原字节随应用分发；保留版权声明与 SIL OFL 1.1，不修改字体。",
+      "sourceReferences": [
+        "https://raw.githubusercontent.com/adobe-fonts/source-han-sans/a4f7cf94edfb9d7ffbdfc4841de276358bd7e0f2/SubsetOTF/CN/SourceHanSansCN-Medium.otf",
+        "assets/fonts/source-han-sans/LICENSE.txt",
+        "assets/fonts/source-han-sans/provenance.json"
+      ]
+    },
+    {
+      "path": "assets/fonts/source-han-sans/SourceHanSansCN-Bold.otf",
+      "size": 8569308,
+      "sha256": "62383707c086a32f3afd5e293f34c7eff64c7fea31f579fdc6cbe34d920519a6",
+      "origin": "upstream-font",
+      "license": "OFL-1.1",
+      "sourceStatement": "Adobe 官方简体中文思源黑体，原字节随应用分发；保留版权声明与 SIL OFL 1.1，不修改字体。",
+      "sourceReferences": [
+        "https://raw.githubusercontent.com/adobe-fonts/source-han-sans/a4f7cf94edfb9d7ffbdfc4841de276358bd7e0f2/SubsetOTF/CN/SourceHanSansCN-Bold.otf",
+        "assets/fonts/source-han-sans/LICENSE.txt",
+        "assets/fonts/source-han-sans/provenance.json"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/home-empty-1920x1080.png",
+      "size": 28485,
+      "sha256": "c7bf8eb0c568f72ef2f20f3729c05a466620ef6bdcfd1ce50313b47dc071f335",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/home-empty-1280x720.png",
+      "size": 22714,
+      "sha256": "34069db612ffef30950cbeebae612b2b5fc188328e707660fd8cf479fe55b84d",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/home-empty-1920x1080-at150.png",
+      "size": 37626,
+      "sha256": "91f677a421ac55b668ad5ac22d5c7c5d52a8e5b2e576214389194d3c97308556",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/home-folders-1920x1080.png",
+      "size": 122819,
+      "sha256": "6b016f0d96d25b507aa34dc4c9ffeb1ad73d0f020110de0de3adc194ba69896f",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/home-folders-1280x720.png",
+      "size": 59775,
+      "sha256": "546749e3dbae4362149587e4a6f7b5c2b1576572b0fc88719287742ccd73518d",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/home-folders-1920x1080-at150.png",
+      "size": 102934,
+      "sha256": "247ee0626b66c077532fca4712f5d2678d1f58fd26f28fa42966c8c00994f209",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/home-search-1920x1080.png",
+      "size": 56912,
+      "sha256": "33d54254b705bad72cb2683b053edb6a54c6ebc0a93b12d33e5215927773fe1b",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/home-search-1280x720.png",
+      "size": 48596,
+      "sha256": "4040700de08632b63e3a3af8666833a3a7fbe24cb39952adfe31d80075cc238c",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "test/goldens/baselines/home-search-1920x1080-at150.png",
+      "size": 83453,
+      "sha256": "f1f2bd8a9b1c6ed21236e39b1fd8d38897e4681418a618fe51e65c71d107b9e2",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "正式 OpenNote 工作台与项目自产 PDF 样例生成的 UI 截图回归基线；不含用户资料或外部书页，不分发字体文件。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json"
+      ],
+      "derivedFrom": [
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    },
+    {
+      "path": "tools/fixtures/epub/epub2-reflow.epub",
+      "size": 70950,
+      "sha256": "33b1675091cb039afdbac1ac4b3eff115209b8eedd13b1161afff1909dc7157a",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "OpenNote 自造的中英日韩文字、SVG、公式、目录与脚注，内含已声明的自产 bilingual.png，不包含外部书页。",
+      "sourceReferences": [
+        "tools/epub/create_fixtures.py",
+        "test/ocr/fixtures/expected.json"
+      ]
+    },
+    {
+      "path": "tools/fixtures/epub/epub3-reflow.epub",
+      "size": 70957,
+      "sha256": "5cc834bde66b9e9e2a9e3c2e74ac45df35d590a402790948cd037e87b99deb2d",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "OpenNote 自造的中英日韩文字、SVG、公式、目录与脚注，内含已声明的自产 bilingual.png，不包含外部书页。",
+      "sourceReferences": [
+        "tools/epub/create_fixtures.py",
+        "test/ocr/fixtures/expected.json"
+      ]
+    },
+    {
+      "path": "tools/fixtures/epub/epub3-vertical.epub",
+      "size": 71002,
+      "sha256": "bba2df73439daaa1730b006f34fb657336d9897d4e4621aae42866c1ba5aa027",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "OpenNote 自造的中英日韩文字、SVG、公式、目录与脚注，内含已声明的自产 bilingual.png，不包含外部书页。",
+      "sourceReferences": [
+        "tools/epub/create_fixtures.py",
+        "test/ocr/fixtures/expected.json"
+      ]
+    },
+    {
+      "path": "tools/fixtures/epub/epub3-fixed.epub",
+      "size": 71055,
+      "sha256": "b9b7bbea696dea61dc01bd6c6cd35a884e40beb9d3cd08c506732ce7bdf1f5c7",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "OpenNote 自造的中英日韩文字、SVG、公式、目录与脚注，内含已声明的自产 bilingual.png，不包含外部书页。",
+      "sourceReferences": [
+        "tools/epub/create_fixtures.py",
+        "test/ocr/fixtures/expected.json"
+      ]
+    },
+    {
+      "path": "tools/fixtures/epub/epub3-mixed.epub",
+      "size": 71012,
+      "sha256": "78f0c8fc5fed9effde2d8a7f2d7c3e9bad094e46369c3fb10faffa89478c7546",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "OpenNote 自造的中英日韩文字、SVG、公式、目录与脚注，内含已声明的自产 bilingual.png，不包含外部书页。",
+      "sourceReferences": [
+        "tools/epub/create_fixtures.py",
+        "test/ocr/fixtures/expected.json"
+      ]
+    },
+    {
+      "path": "docs/images/workbench.png",
+      "size": 239024,
+      "sha256": "ab6586084cd14c2dc8ada0f289a341571b56fd9e6b0c57d07731f1cfed3f2609",
+      "origin": "generated",
+      "license": "Apache-2.0",
+      "sourceStatement": "当前 OpenNote 工作台组件渲染的 1920×1080 演示截图；沿用工作台 Golden 测试的自产 PDF 与仓储 API 演示数据，通过正式分栏交互调整可读区域；不使用用户资料库、私人书籍或安装记录。",
+      "sourceReferences": [
+        "test/goldens/workbench_golden_test.dart",
+        "test/goldens/baseline-environment.json",
+        "tools/fixtures/pdf/ui-reading.pdf"
+      ]
+    }
+  ]
+}

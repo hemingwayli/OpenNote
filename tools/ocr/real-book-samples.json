@@ -1,0 +1,80 @@
+{
+  "samples": [
+    {
+      "id": "austen-1817-page11",
+      "image": "austen-page11.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Austen_-_Pride_and_Prejudice,_third_edition,_1817.djvu?page=11",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/30/Austen_-_Pride_and_Prejudice%2C_third_edition%2C_1817.djvu/page11-1920px-Austen_-_Pride_and_Prejudice%2C_third_edition%2C_1817.djvu.jpg",
+      "sha256": "d1ad36084511946ce54cbf893d61d59f1c48deb848d19f0346bf566321ba0a36",
+      "license": "Commons PD-scan / PD-old-100-expired, original 1817; Internet Archive prideprejudiceno121aust.",
+      "excerpts": [
+        {
+          "name": "First two body paragraphs, including bleed-through errors",
+          "bounds": [175, 1390, 1620, 2200],
+          "reference": "It is a truth universally acknowledged, that\na single man in possession of a good fortune\nmust be in want of a wife.\nHowever little known the feelings or views\nof such a man may be on his first entering a\nneighbourhood, this truth is so well fixed in\nthe minds of the surrounding families, that he\nis considered as the rightful property of some\none or other of their daughters."
+        }
+      ],
+      "geometrySpots": [
+        {"glyph": "I", "lineRegion": [175, 1390, 1620, 1500], "characterIndex": 0, "manualGlyphBounds": [195, 1395, 245, 1490]},
+        {"glyph": "t in truth", "lineRegion": [175, 1390, 1620, 1500], "characterIndex": 8, "manualGlyphBounds": [445, 1410, 481, 1490]},
+        {"glyph": "h in truth", "lineRegion": [175, 1390, 1620, 1500], "characterIndex": 12, "manualGlyphBounds": [560, 1410, 603, 1490]}
+      ],
+      "observedLimits": ["Opening It recognized as Ir; background reverse-page bleed-through added characters after the second paragraph.", "Geometry spot checks compare only six English/Chinese token centers with manually boxed visible glyphs; they do not certify tight glyph outlines or all-character accuracy."]
+    },
+    {
+      "id": "china-history-1920-page20",
+      "image": "chinese-page20.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:NLC416-17jh001772-107310_%E5%85%B1%E5%92%8C%E5%9C%8B%E6%95%99%E7%A7%91%E6%9B%B8%E6%9C%AC%E5%9C%8B%E5%8F%B2.pdf?page=20",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ac/NLC416-17jh001772-107310_%E5%85%B1%E5%92%8C%E5%9C%8B%E6%95%99%E7%A7%91%E6%9B%B8%E6%9C%AC%E5%9C%8B%E5%8F%B2.pdf/page20-1280px-NLC416-17jh001772-107310_%E5%85%B1%E5%92%8C%E5%9C%8B%E6%95%99%E7%A7%91%E6%9B%B8%E6%9C%AC%E5%9C%8B%E5%8F%B2.pdf.jpg",
+      "sha256": "586a6640f563a30991f43f208df5c07b8be7c20c370ed5a5eb067c2aaa116cd0",
+      "license": "Commons PD-scan / PD-China; original 1920, National Library of China, 趙玉森編纂, 商務印書館.",
+      "excerpts": [
+        {
+          "name": "First three main vertical columns, correct right-to-left column order; omit tiny interlinear geography gloss",
+          "bounds": [918, 350, 1170, 1810],
+          "reference": "十一征。諸侯咸服。遂入夏。放桀。卽帝位。都亳。國號商。\n湯之後凡五興五衰。湯孫太甲行暴虐。伊尹放之桐。三年而太甲悔過。伊尹\n復奉之歸於亳。修德勤政。諸侯咸歸。百姓安寧。自太甲四傳至雍己。綱紀漸紊。諸"
+        }
+      ],
+      "geometrySpots": [
+        {"glyph": "十", "lineRegion": [1080, 350, 1170, 1450], "characterIndex": 0, "manualGlyphBounds": [1083, 378, 1135, 425]},
+        {"glyph": "征", "lineRegion": [1080, 350, 1170, 1450], "characterIndex": 2, "manualGlyphBounds": [1083, 474, 1138, 525]},
+        {"glyph": "亳", "lineRegion": [1080, 350, 1170, 1450], "characterIndex": 16, "manualGlyphBounds": [1086, 1080, 1148, 1140]}
+      ],
+      "observedLimits": ["Vertical body detected as long columns; v1 column order was reversed and v2 corrects dominant vertical pages.", "Historical typeface substitutions (咸/成, 湯/陽); most punctuation omitted and tiny double-line geography gloss may enter the body.", "Native glyph geometry remains approximate CTC alignment, not exact per-character segmentation."]
+    },
+    {
+      "id": "hillier-1921-page110",
+      "image": "hillier-page110.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:The_Chinese_language_and_how_to_learn_it.djvu?page=110",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3f/The_Chinese_language_and_how_to_learn_it.djvu/page110-1920px-The_Chinese_language_and_how_to_learn_it.djvu.jpg",
+      "sha256": "eb1292f32bca400c50a7b279291c1d424cc094c13295f742f8804d2ecc6b3a05",
+      "license": "Commons PD-old / Public Domain Mark; Sir Walter Hillier 1849-1927, original 1921; Internet Archive chineselanguageh00hilliala.",
+      "excerpts": [
+        {
+          "name": "Left column dialogue 58 (column chosen by geometry, no correction of OCR text)",
+          "bounds": [130, 410, 960, 970],
+          "reference": "58. The train starts at twenty\nminutes past three. The\nbaggage must be ready by\nten minutes to three, as the\ncarriage will be at the\ndoor then, and it will take\na quarter of an hour to\ndrive to the station."
+        }
+      ],
+      "geometrySpots": [],
+      "observedLimits": ["Horizontal double-column page with short vertical Chinese glosses must stay horizontal; basic row order interleaves columns rather than reconstructing whole-column reading order.", "Tiny tone numerals, brace-grouped glosses and uncommon characters have omissions/substitutions."]
+    },
+    {
+      "id": "hua-ying-1860-page20",
+      "image": "hua-ying-page20.jpg",
+      "source": "https://commons.wikimedia.org/wiki/File:Harvard_drs_17751141_%E8%8F%AF%E8%8B%B1%E9%80%9A%E8%AA%9E_v.1.pdf?page=20",
+      "imageUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bb/Harvard_drs_17751141_%E8%8F%AF%E8%8B%B1%E9%80%9A%E8%AA%9E_v.1.pdf/page20-1920px-Harvard_drs_17751141_%E8%8F%AF%E8%8B%B1%E9%80%9A%E8%AA%9E_v.1.pdf.jpg",
+      "sha256": "c60bb9bfeab13c7d0af3effd60a8bf8901041a6b857bfab0788a2dc040086da7",
+      "license": "Commons PD-old / Public Domain Mark; 1860 華英通語 blockprint, Harvard-Yenching Library Chinese rare book digitization, drs:17751141.",
+      "excerpts": [
+        {
+          "name": "Pacific label with historical right-to-left horizontal direction",
+          "bounds": [470, 420, 840, 535],
+          "reference": "太平洋"
+        }
+      ],
+      "geometrySpots": [],
+      "observedLimits": ["Horizontal right-to-left classical labels are read left-to-right as 洋平太; dominant-vertical logic cannot infer this historical convention.", "Woodblock calligraphy and archaic phonetic glosses yield substitutions; a three-character label is only a boundary spot check, not a page-level quality estimate."]
+    }
+  ]
+}

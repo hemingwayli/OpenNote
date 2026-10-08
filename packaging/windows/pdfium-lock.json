@@ -1,0 +1,24 @@
+{
+  "url": "https://github.com/bblanchon/pdfium-binaries/releases/download/chromium%2F7811/pdfium-win-x64.tgz",
+  "release": "chromium/7811",
+  "archiveSha256": "2e7af12674ac3716cb0e20369bb9fb269ceadfa2f0b0597097a520e6834175a0",
+  "binarySha256": "019b6ee6e54e5508002e43c5199b00f6caca26d32dd23c7bb229ff6855cd5394",
+  "notices": [
+    "LICENSE",
+    "licenses/icu.txt",
+    "licenses/zlib.txt",
+    "licenses/libjpeg_turbo.ijg",
+    "licenses/llvm-libc.txt",
+    "licenses/pdfium.txt",
+    "licenses/lcms.txt",
+    "licenses/libpng.txt",
+    "licenses/agg23.txt",
+    "licenses/libopenjpeg.txt",
+    "licenses/libjpeg_turbo.md",
+    "licenses/freetype.txt",
+    "licenses/libtiff.txt",
+    "licenses/fast_float.txt",
+    "licenses/abseil.txt",
+    "licenses/simdutf.txt"
+  ]
+}

@@ -1,0 +1,226 @@
+{
+  "formatVersion": 1,
+  "description": "Standalone validation runtime; application build has its own artifact hashes",
+  "files": [
+    {
+      "path": "opencv_world4110.dll",
+      "sha256": "3605a427658597d55310de4ef5bf1ac92ff28df23e01344571fd287d4f1e6dab",
+      "size": 64825856
+    },
+    {
+      "path": "opennote_ocr.dll",
+      "sha256": "0061618b20f8736cb8a78cae30899f315e4dc923ed0f5a7f6d629537fada55af",
+      "size": 284672
+    },
+    {
+      "path": "opennote_onnxruntime.dll",
+      "sha256": "2a24789bb06768fe41e5287ca3f35851861bc7902d2f5bf68c6bb9a4dc3c7332",
+      "size": 13006392
+    },
+    {
+      "path": "data/ocr/characters.txt",
+      "sha256": "d051391881962ec266c4b4ee7b6a493fa2aeabaa2cd9ee369148cf3f6980af99",
+      "size": 74949
+    },
+    {
+      "path": "data/ocr/manifest.json",
+      "sha256": "42219bec677af62dd7de1626ebdb485a5c87ca24e54a3f83c013a03a2a62eefd",
+      "size": 3380
+    },
+    {
+      "path": "data/ocr/det/inference.onnx",
+      "sha256": "d73e0058b7a8086bbd57f3d10b8bcd4ff95363f67e06e2762b5e814fe9c9410e",
+      "size": 9880512
+    },
+    {
+      "path": "data/ocr/det/inference.yml",
+      "sha256": "193f435274bf9f0b5f71a929bbfbcf148282df7e633b34e7c373e8f44741b516",
+      "size": 885
+    },
+    {
+      "path": "data/ocr/licenses/ONNXRuntime-ThirdPartyNotices.txt",
+      "sha256": "34103169a6338d341a8560f6e680ce36093408d83a662c994c6a5d8154b5e0e8",
+      "size": 322196
+    },
+    {
+      "path": "data/ocr/licenses/ONNXRuntime.txt",
+      "sha256": "c250d6278f0b47a6439fb7592b08b58a55eb9f535aa49a1db63211c3f982b674",
+      "size": 1094
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV.txt",
+      "sha256": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5",
+      "size": 11560
+    },
+    {
+      "path": "data/ocr/licenses/PaddleOCR.txt",
+      "sha256": "3840c5c0c61c294264d2dd77b8777be6ddd90121ef4e0e64abcd22edea581d6e",
+      "size": 11376
+    },
+    {
+      "path": "data/ocr/licenses/yaml-cpp.txt",
+      "sha256": "aa6fcc27be034e41e21dd832f9175bfe694a48491d9e14ff0fa278e19ad14f1b",
+      "size": 1061
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/ade-LICENSE",
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "size": 11358
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/ffmpeg-license.txt",
+      "sha256": "1629ff18b1b89e918905e9e92bbad4606a491ad05779809be217cf0f2fa0d435",
+      "size": 27913
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/ffmpeg-readme.txt",
+      "sha256": "4f7f840358fae114d353337acd60ac99c88701b296cb92ef2fef513a2c494452",
+      "size": 2504
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/flatbuffers-LICENSE.txt",
+      "sha256": "3ddf9be5c28fe27dad143a5dc76eea25222ad1dd68934a047064e56ed2fa40c5",
+      "size": 11560
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/ippicv-EULA.rtf",
+      "sha256": "37f11c79f36fb5e1b00aca31c1234a7435c2929d83e181ee802a349ca8571749",
+      "size": 68409
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/ippicv-readme.htm",
+      "sha256": "2fbc6125275ebb4fe17dcbfdf987e8cac1694a15fd5d73aa8861b69015ae6ccf",
+      "size": 6894
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/ippicv-third-party-programs.txt",
+      "sha256": "2c7e4d2e467b5f3c53db4b4cf3294a07b2f77707ebd58c49689062fdf272e40b",
+      "size": 285
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/ippiw-EULA.rtf",
+      "sha256": "37f11c79f36fb5e1b00aca31c1234a7435c2929d83e181ee802a349ca8571749",
+      "size": 68409
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/ippiw-support.txt",
+      "sha256": "778673f49a9ee1383302a7e9921b5792a7a4792e38d9c6d0d38c90eb9c9baa1e",
+      "size": 364
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/ippiw-third-party-programs.txt",
+      "sha256": "2c7e4d2e467b5f3c53db4b4cf3294a07b2f77707ebd58c49689062fdf272e40b",
+      "size": 285
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/ittnotify-LICENSE.BSD",
+      "sha256": "d16331a9e2a075c97993963c5bbb4623bef378bbd47ccc0909f096fdb0f92629",
+      "size": 1488
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/ittnotify-LICENSE.GPL",
+      "sha256": "47f0e357ffea8108e89b83bb114fd597d70d3dd270454c4ae488863e431f8a57",
+      "size": 17623
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/libjpeg-turbo-LICENSE.md",
+      "sha256": "d18720d8abf40123d52891e8a88df2c37d713bc73c7662ced0aee5e59401c084",
+      "size": 5755
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/libjpeg-turbo-README.ijg",
+      "sha256": "2896438d0a638682ca345d076eb1d5ce7e16d56da397fbf6157fc50b56aff5e4",
+      "size": 12997
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/libjpeg-turbo-README.md",
+      "sha256": "5e71ac0d7d447a17616debc3f5a06041a9028fa31a25bd25da94495271abaa66",
+      "size": 18014
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/libopenjp2-LICENSE",
+      "sha256": "1203c08d905d7ea23de2efc40fbfb147d593c327cf72f0d55c1e13081798d48d",
+      "size": 2151
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/libopenjp2-README.md",
+      "sha256": "a82eefc115f4b6c2c3510651cc656f487f713edfca2be9332e5f55dc4017478b",
+      "size": 5485
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/libpng-LICENSE",
+      "sha256": "905fe5046517c4fe3bc63f36cb7b80d373e174e4afe03da1f5ad0077379dce0a",
+      "size": 5479
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/libpng-README",
+      "sha256": "bb3687805d4b66be32e536e0447b6c4fb798c0550a3add14d57bd3d40b221656",
+      "size": 9638
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/libtiff-COPYRIGHT",
+      "sha256": "8f859efd8916b7df374bd39dc9eeea9d53dbcf35e62fcf670d2b3b4c4d8f251a",
+      "size": 1167
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/mscr-chi_table_LICENSE.txt",
+      "sha256": "3562b309154acbd79175a8c9055897721c1a770f4f5208aa12d0e6284812c84d",
+      "size": 1587
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/opencl-headers-LICENSE.txt",
+      "sha256": "4ce57ae987c869f8d1c296cced11daa3121c1716c5e0ce3455cb9b4d4a41bcbf",
+      "size": 1334
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/openexr-AUTHORS.ilmbase",
+      "sha256": "ce3d8791b21477bcfcce29301b7f378c188caecd9ca647ff91704e1736ff479a",
+      "size": 357
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/openexr-AUTHORS.openexr",
+      "sha256": "202dd37f32d11914daae0e13258853aca67ea014a69a0d016cdce2c8239a919a",
+      "size": 1302
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/openexr-LICENSE",
+      "sha256": "f7f4a60d7b6da8787d30fc058701d91dcf67b148ef5f1f31be69d1bda8880f84",
+      "size": 1731
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/protobuf-LICENSE",
+      "sha256": "f4df8b2457697851385d9ebb93267832c1dfa24e0e61881952f6b0c452663dc9",
+      "size": 1764
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/protobuf-README.md",
+      "sha256": "521eae82acd5726bfc6b45aef1f91288054a60111426158c625d75aa02c2ed0a",
+      "size": 137
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/SoftFloat-COPYING.txt",
+      "sha256": "157c1095adca585146eef6b36f654daff6ade2b4b40dad49aa6cd6b0aaee80ef",
+      "size": 1768
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/vasot-LICENSE.txt",
+      "sha256": "1efc5b489dd9e7c3f9dff762bbd0c949b6ebdeea5f3fd535653a57026edcef21",
+      "size": 1104
+    },
+    {
+      "path": "data/ocr/licenses/OpenCV-ThirdParty/zlib-LICENSE",
+      "sha256": "18dbd37f0ab175c37877e9053ff870a7de2809a3e9b9673b2696aa5009264638",
+      "size": 1024
+    },
+    {
+      "path": "data/ocr/rec/inference.onnx",
+      "sha256": "5435fd747c9e0efe15a96d0b378d5bd157e9492ed8fd80edf08f30d02fa24634",
+      "size": 21159378
+    },
+    {
+      "path": "data/ocr/rec/inference.yml",
+      "sha256": "ab078671bb49f06228eadccd34f1bb501e157f7a047095ffb943ba81512c77d1",
+      "size": 150579
+    }
+  ]
+}

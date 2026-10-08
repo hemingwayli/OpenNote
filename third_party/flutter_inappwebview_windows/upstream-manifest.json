@@ -1,0 +1,767 @@
+{
+  "package": "flutter_inappwebview_windows",
+  "version": "0.6.0",
+  "source": "https://pub.dev/packages/flutter_inappwebview_windows/versions/0.6.0",
+  "files": [
+    {
+      "path": "CHANGELOG.md",
+      "size": 1462,
+      "sha256": "82dfa288b597dd6781ad8092e1832c180e243f2a97d2510ac7458cf5d636ab6c"
+    },
+    {
+      "path": "lib/flutter_inappwebview_windows.dart",
+      "size": 66,
+      "sha256": "5e70d8d8fbf5d74b1c12d1be4f2eacc49cbeab98a963196cd68b9075a0994ad3"
+    },
+    {
+      "path": "lib/src/cookie_manager.dart",
+      "size": 8833,
+      "sha256": "657c0259e7c4b6c6d166763f6555e2ce1d2b68bdfd2dfa0f195a11eaa7ea35d8"
+    },
+    {
+      "path": "lib/src/find_interaction/find_interaction_controller.dart",
+      "size": 5365,
+      "sha256": "1e241c19386c21b0292beb04edd859ea934bde59fc4f5f37b71f72464cd00c60"
+    },
+    {
+      "path": "lib/src/find_interaction/main.dart",
+      "size": 88,
+      "sha256": "e64b252df82f40806ebfcf7013285a584cbffec167446063c180e609a1032103"
+    },
+    {
+      "path": "lib/src/http_auth_credentials_database.dart",
+      "size": 6374,
+      "sha256": "97f8c9cd4caf0e001007e6da4d33da177efdb9132a4ba6a974010c4945d44cc3"
+    },
+    {
+      "path": "lib/src/in_app_browser/in_app_browser.dart",
+      "size": 12805,
+      "sha256": "7ee72e249177a7419037c13bd411a7b804b248f84288eec0289cfeec96ca0f2d"
+    },
+    {
+      "path": "lib/src/in_app_browser/main.dart",
+      "size": 57,
+      "sha256": "1b4e33f4b8ba1e59cec3f5b750d60b000fa5d959d0adf13d86ed6ccddf7af2ef"
+    },
+    {
+      "path": "lib/src/in_app_webview/_static_channel.dart",
+      "size": 154,
+      "sha256": "f93dc74e67c2a68c1d3ffa75040d4064f7870141968e331879b821a256c770cd"
+    },
+    {
+      "path": "lib/src/in_app_webview/custom_platform_view.dart",
+      "size": 15405,
+      "sha256": "5c663b24c4e090b696ff2117017b5192eae9bfa32d9ee04498e2a72bbf62e158"
+    },
+    {
+      "path": "lib/src/in_app_webview/headless_in_app_webview.dart",
+      "size": 19244,
+      "sha256": "bbf2d10f177f1b42668ea5d0af6802dcdd1fa59ab350e86df5af921d73638dcd"
+    },
+    {
+      "path": "lib/src/in_app_webview/in_app_webview.dart",
+      "size": 18836,
+      "sha256": "1d4ea204bba3cfc4fe28e053f0b54bad47c9291015c648e44c872522a18fbacb"
+    },
+    {
+      "path": "lib/src/in_app_webview/in_app_webview_controller.dart",
+      "size": 110769,
+      "sha256": "e5a50dbfb31654bb20fe44d42605824b1f75d265bd6945330c6318ed6a18f620"
+    },
+    {
+      "path": "lib/src/in_app_webview/main.dart",
+      "size": 183,
+      "sha256": "8c6d84f409cf200ccbbb0aa4d271da6e0c2c8245189391a29e4a021a2ef788d3"
+    },
+    {
+      "path": "lib/src/inappwebview_platform.dart",
+      "size": 5286,
+      "sha256": "30c8653869091b5a7cf2f50109553692169319e4d7812ddc43b910d2a88afe81"
+    },
+    {
+      "path": "lib/src/main.dart",
+      "size": 436,
+      "sha256": "1712d2767f35daba98c904707ec7a79cd2bdbcb338dc2bbc54c8843facda2c4b"
+    },
+    {
+      "path": "lib/src/platform_util.dart",
+      "size": 2032,
+      "sha256": "0d6ad132dde450a16318b2dc5b92c16ef4c7d690865d7aed28ac246b7ef944ef"
+    },
+    {
+      "path": "lib/src/print_job/main.dart",
+      "size": 37,
+      "sha256": "e8857591599b79879fd5464c7693882e05b937fe9391f802d5802ec664869ea1"
+    },
+    {
+      "path": "lib/src/print_job/print_job_controller.dart",
+      "size": 2963,
+      "sha256": "637037b8e7cf43da8abc2a566a21c87d522e597085540f2f207ca267c178f378"
+    },
+    {
+      "path": "lib/src/web_message/main.dart",
+      "size": 165,
+      "sha256": "e2e7cf9dbc818eefcf72ecdf413a38b05d38152964e4c05a4e123284f75c9225"
+    },
+    {
+      "path": "lib/src/web_message/web_message_channel.dart",
+      "size": 4568,
+      "sha256": "8fd5734ccac89070fcf3c43706dd361d7ced995bd386d1358cef6154f4f3bc2f"
+    },
+    {
+      "path": "lib/src/web_message/web_message_listener.dart",
+      "size": 6552,
+      "sha256": "ac9ebfcc4a94cd2a14f894d8977f801e7463dd3442a01118dee31820f8ae9765"
+    },
+    {
+      "path": "lib/src/web_message/web_message_port.dart",
+      "size": 3489,
+      "sha256": "a4ba5a81ff5d42d015172272afc5b6445af6701abc5ba62c9e7f00ed67cb971a"
+    },
+    {
+      "path": "lib/src/web_storage/main.dart",
+      "size": 95,
+      "sha256": "6e8a75db42bfee385518418866e4046e156fee3a71f910d434f74596a53661a7"
+    },
+    {
+      "path": "lib/src/web_storage/web_storage.dart",
+      "size": 9487,
+      "sha256": "fe56bbb14b591a2e7b0996badb687525cccc87930542c90104997ce38cb6accb"
+    },
+    {
+      "path": "lib/src/web_storage/web_storage_manager.dart",
+      "size": 4978,
+      "sha256": "fbf05690f8b991f61e05df3256d786e5d627279eeb182b264b22e8e7cffcf220"
+    },
+    {
+      "path": "lib/src/webview_environment/main.dart",
+      "size": 74,
+      "sha256": "e740b0c32ab502c0370f3517332376d0021b62d94fe62ae47cfff26a115740fe"
+    },
+    {
+      "path": "lib/src/webview_environment/webview_environment.dart",
+      "size": 4337,
+      "sha256": "181dcf3a9f8715716d790216019de2a7c01843210bd5c401fc2e0f906dc1fb6b"
+    },
+    {
+      "path": "LICENSE",
+      "size": 11547,
+      "sha256": "d98181ad10d102e1fb4d8214315c074699f01423725c9fb6bfe931f36342769c"
+    },
+    {
+      "path": "pubspec.yaml",
+      "size": 2851,
+      "sha256": "b5e91f98d5c436741ca3685669a1a3c5137a65642ce5ea570c69a888804b63f2"
+    },
+    {
+      "path": "README.md",
+      "size": 610,
+      "sha256": "eec1c6843a861a47c26e2b77b8ebd4ae67def41d44d6fd7d32b51bdfd807a6e3"
+    },
+    {
+      "path": "windows/CMakeLists.txt",
+      "size": 11113,
+      "sha256": "73cfabae0fa0cbd346a5c7d605eebe1b1dee56e1878a7dfe84a72a0ad71d7f94"
+    },
+    {
+      "path": "windows/cookie_manager.cpp",
+      "size": 13960,
+      "sha256": "37be59b0be89d325bb306a91246af4cc3befb5627fdb2fe70f527ab32135e075"
+    },
+    {
+      "path": "windows/cookie_manager.h",
+      "size": 2098,
+      "sha256": "113164b7ef81937a6ca902e38df7edecc86d8bf3c747764e0b19bcc9a2a0e711"
+    },
+    {
+      "path": "windows/custom_platform_view/custom_platform_view.cc",
+      "size": 12281,
+      "sha256": "b54fd686fb213cf2bd0817dfb27fbaf36c451c00f149d5e55a17a16c6adcf086"
+    },
+    {
+      "path": "windows/custom_platform_view/custom_platform_view.h",
+      "size": 1863,
+      "sha256": "98799ea6f1ed5faf458ca0a2ff0848305e99795e8952f0106cb2ac2ad9fd35e5"
+    },
+    {
+      "path": "windows/custom_platform_view/graphics_context.cc",
+      "size": 4966,
+      "sha256": "a7af7a2d5f38eb76037bfb83ffd5a23241bb9bc2504f8d0ba9b378613289e625"
+    },
+    {
+      "path": "windows/custom_platform_view/graphics_context.h",
+      "size": 1945,
+      "sha256": "c9ae77d037a146869ab3ad77aaffbf6538c7dad67114cd41461735c25aa3708e"
+    },
+    {
+      "path": "windows/custom_platform_view/texture_bridge.cc",
+      "size": 5205,
+      "sha256": "b701b56ca995b40453e253aa284fb1896d344349de48d6a22a3114203a6d27fb"
+    },
+    {
+      "path": "windows/custom_platform_view/texture_bridge.h",
+      "size": 2295,
+      "sha256": "cbb15b53db9f28bcdd951f540c184523476f386a814ae87a930ce4abc1a2bdcd"
+    },
+    {
+      "path": "windows/custom_platform_view/texture_bridge_fallback.cc",
+      "size": 4668,
+      "sha256": "176d72c88a5b0b5190c6bc9e69734f7df6bcdd4f037cd44f61374c10ce94114c"
+    },
+    {
+      "path": "windows/custom_platform_view/texture_bridge_fallback.h",
+      "size": 904,
+      "sha256": "8f73ec8b26b1a235f38609624157c87bcefa97f4320071fc12dca9e5131b8e1f"
+    },
+    {
+      "path": "windows/custom_platform_view/texture_bridge_gpu.cc",
+      "size": 3357,
+      "sha256": "8a2adeeb1d141aa461e49b688d8822f6871b13718aba8e4e22e8526abb4f4aaf"
+    },
+    {
+      "path": "windows/custom_platform_view/texture_bridge_gpu.h",
+      "size": 826,
+      "sha256": "9e75c55b7b5e11fb114d489a074e36172bf68ef5844e54bc9acf14aaef125931"
+    },
+    {
+      "path": "windows/custom_platform_view/util/composition.desktop.interop.h",
+      "size": 640,
+      "sha256": "863640a7bdf2a6c3de20589299783e40a35d3a81f717ba386b927ce71c7c2076"
+    },
+    {
+      "path": "windows/custom_platform_view/util/cpuid/cpuinfo.cc",
+      "size": 2509,
+      "sha256": "9fe6142fdaa8b23731c956c33a3f199687b83943170750ff0349f9c7d0a2a517"
+    },
+    {
+      "path": "windows/custom_platform_view/util/cpuid/cpuinfo.h",
+      "size": 2509,
+      "sha256": "429d0d26c8268e9df721ab9e48ed493f3f3d2a672a69bb9a9b4508358ade6886"
+    },
+    {
+      "path": "windows/custom_platform_view/util/cpuid/detail/cpuinfo_impl.h",
+      "size": 1767,
+      "sha256": "1a05be4191aeb01ec1290e44a5d7c910be281064e0a3159604145396372258f7"
+    },
+    {
+      "path": "windows/custom_platform_view/util/cpuid/detail/extract_x86_flags.h",
+      "size": 1698,
+      "sha256": "c8db59e09911b1d97440b9d7394743e45c66862b3a87f9bfe2799d10f975ec91"
+    },
+    {
+      "path": "windows/custom_platform_view/util/cpuid/detail/init_msvc_x86.h",
+      "size": 1060,
+      "sha256": "301185703b76e496155a941bb063e3320d448ca6ffbebe8e548732c46d990e75"
+    },
+    {
+      "path": "windows/custom_platform_view/util/cpuid/detail/init_unknown.h",
+      "size": 147,
+      "sha256": "e5d0b1da1c7cdd9ffcad16b84150fc329fa86fc7e675d85ebf6bc8f27dcb5ea7"
+    },
+    {
+      "path": "windows/custom_platform_view/util/d3dutil.h",
+      "size": 853,
+      "sha256": "feb901124cfa2dacfd8d9e9566730daffd61f54806dd5220a4d459ec68d6d357"
+    },
+    {
+      "path": "windows/custom_platform_view/util/direct3d11.interop.cc",
+      "size": 1154,
+      "sha256": "f7a0e130104a5ae0f1c10653788b303c6fd6e483c0295c19391a03dec695ab50"
+    },
+    {
+      "path": "windows/custom_platform_view/util/direct3d11.interop.h",
+      "size": 1521,
+      "sha256": "fb0fd94fd1456a5c331d6ee53d919a254bb1ae87d570d9e3eba3d6b968d1b3e9"
+    },
+    {
+      "path": "windows/custom_platform_view/util/rohelper.cc",
+      "size": 7688,
+      "sha256": "d61d7e767bb5b10613e0308c59ec3be6b3b79628ac2cf5b982feee43c863f57e"
+    },
+    {
+      "path": "windows/custom_platform_view/util/rohelper.h",
+      "size": 4232,
+      "sha256": "6c20ad9dddc1371112de56c06f4acbc31fc4f18d3a76539e08107af64c681be5"
+    },
+    {
+      "path": "windows/custom_platform_view/util/string_converter.cc",
+      "size": 1694,
+      "sha256": "35112bd7820e23bc8ca96182c6446c02d9238c6414d0f8f291bc90a247630ed5"
+    },
+    {
+      "path": "windows/custom_platform_view/util/string_converter.h",
+      "size": 196,
+      "sha256": "048d2c10e73a18d522b5ead975675618e8b98cd49fcd63d4ca3725039dcf8384"
+    },
+    {
+      "path": "windows/custom_platform_view/util/swizzle.h",
+      "size": 6260,
+      "sha256": "2d627b4669c85f2af4014480c68db826bf97e7dc8e3bd500d0b70b8d89f54a68"
+    },
+    {
+      "path": "windows/flutter_inappwebview_windows_plugin.cpp",
+      "size": 1587,
+      "sha256": "635531a17e4ac0dd103002cec0288b98016cd2be2db06e56944c216c3862389a"
+    },
+    {
+      "path": "windows/flutter_inappwebview_windows_plugin.h",
+      "size": 1396,
+      "sha256": "c1e2a7ad9be779c2c1845046333a870aca8ee633063bbdf8057aab0152113441"
+    },
+    {
+      "path": "windows/flutter_inappwebview_windows_plugin_c_api.cpp",
+      "size": 521,
+      "sha256": "74b51afad9503122e9a726fb27bbb71ea96481a910be1f4aa3912274f43518e9"
+    },
+    {
+      "path": "windows/headless_in_app_webview/headless_in_app_webview.cpp",
+      "size": 1753,
+      "sha256": "999fdf4e0616bcd1919ab0891c1d5576f6d79fef4849279d3af2cefca583c3be"
+    },
+    {
+      "path": "windows/headless_in_app_webview/headless_in_app_webview.h",
+      "size": 1382,
+      "sha256": "8d75b90029c8fded99a1f593812611daedf53e406d2f8d16f432ed12fba0e556"
+    },
+    {
+      "path": "windows/headless_in_app_webview/headless_in_app_webview_manager.cpp",
+      "size": 6426,
+      "sha256": "ea4349deddf3e98b11ba5d6d3d9f7d67eca9d1940f225b9c6deb2576321497a6"
+    },
+    {
+      "path": "windows/headless_in_app_webview/headless_in_app_webview_manager.h",
+      "size": 1320,
+      "sha256": "e06742c552a9ce87f16f705e87137a2e1590e5a531e55576df0e918de8b936f9"
+    },
+    {
+      "path": "windows/headless_in_app_webview/headless_webview_channel_delegate.cpp",
+      "size": 2109,
+      "sha256": "9fac7804402ee2db314cfd39474854c90814e7e3ae6511328719b0c77a5a310d"
+    },
+    {
+      "path": "windows/headless_in_app_webview/headless_webview_channel_delegate.h",
+      "size": 872,
+      "sha256": "f1a0af5af9cbb0ab3206991fb9e2cc1392102611a165c0b53c1b2fd66474a732"
+    },
+    {
+      "path": "windows/in_app_browser/in_app_browser.cpp",
+      "size": 8796,
+      "sha256": "b89c6d6d39de971d56ca3e8fa4eef59b843ea3463cea6b7099f7f4bc5fc2e310"
+    },
+    {
+      "path": "windows/in_app_browser/in_app_browser.h",
+      "size": 2492,
+      "sha256": "8b3c3357b84528c66bf57c7717bf45669876a1be5809c33bee9518ed0c3743c2"
+    },
+    {
+      "path": "windows/in_app_browser/in_app_browser_channel_delegate.cpp",
+      "size": 1050,
+      "sha256": "3702922952fbd5ce5a966c80f8515814fbd48d69c6b0f1b7cdac4d5183026735"
+    },
+    {
+      "path": "windows/in_app_browser/in_app_browser_channel_delegate.h",
+      "size": 851,
+      "sha256": "52c28825d24ce452781871c8f23a4a5aa4ec3f71d83af59f0d60bd75f4eb6e2c"
+    },
+    {
+      "path": "windows/in_app_browser/in_app_browser_manager.cpp",
+      "size": 3949,
+      "sha256": "fd48e78a6b9e9e517921302e65f633783b210eb283de35f281e945efad7e6274"
+    },
+    {
+      "path": "windows/in_app_browser/in_app_browser_manager.h",
+      "size": 1139,
+      "sha256": "6c14f8659c14d9803e7d7aeca767abc8345a8949099fa644323238ee8aedbe73"
+    },
+    {
+      "path": "windows/in_app_browser/in_app_browser_settings.cpp",
+      "size": 2696,
+      "sha256": "ae4e9723e9c8d25bed6cf79f9e8dd07b1bb35124cc56d3455a1ab72b53424dc0"
+    },
+    {
+      "path": "windows/in_app_browser/in_app_browser_settings.h",
+      "size": 955,
+      "sha256": "514f49d8cf3ea53e99b467d5462c7c65b100c68094c18eb0b77f48b05596e135"
+    },
+    {
+      "path": "windows/in_app_webview/in_app_webview.cpp",
+      "size": 80748,
+      "sha256": "4cb00551207fc4f3b5f9642c2c6a79c50f89c86b2c859129c99c12d524ddeb18"
+    },
+    {
+      "path": "windows/in_app_webview/in_app_webview.h",
+      "size": 9397,
+      "sha256": "1914455fadf8484d3e22ff745adfc412176d6adad87b629f253d7c1d82969919"
+    },
+    {
+      "path": "windows/in_app_webview/in_app_webview_manager.cpp",
+      "size": 10274,
+      "sha256": "eefc7b984c208696b3a3a34f99b0ddc11779fb7470009ebbabcfd274421d77ab"
+    },
+    {
+      "path": "windows/in_app_webview/in_app_webview_manager.h",
+      "size": 2630,
+      "sha256": "0470bebe55abaa760fd804e01ab7e8d99bebe5aa3757b368929c68cd0081c0b7"
+    },
+    {
+      "path": "windows/in_app_webview/in_app_webview_settings.cpp",
+      "size": 3832,
+      "sha256": "0855ff0ebce4f3a4d446bcf226a37bc40da33d16f0eb2e58651ba17d4055878b"
+    },
+    {
+      "path": "windows/in_app_webview/in_app_webview_settings.h",
+      "size": 1005,
+      "sha256": "9bf60e598441467946e5bf5a12848f8b284c4fcdd2133399e6e5687cf44d59e3"
+    },
+    {
+      "path": "windows/in_app_webview/user_content_controller.cpp",
+      "size": 16248,
+      "sha256": "e6d3b6d80770d092539e12e42f835403f7f5093cc31c281b2c0d802649c38089"
+    },
+    {
+      "path": "windows/in_app_webview/user_content_controller.h",
+      "size": 4156,
+      "sha256": "b89bd7a1a367434ebc5a5fdfd45ef1ca707550d13ebf7841e0c1af6e0639e2b3"
+    },
+    {
+      "path": "windows/in_app_webview/webview_channel_delegate.cpp",
+      "size": 19806,
+      "sha256": "e3a491fea03e5be934c6aec29c6e176f581250f9814eb179f8e0421c37bdbf3e"
+    },
+    {
+      "path": "windows/in_app_webview/webview_channel_delegate.h",
+      "size": 4359,
+      "sha256": "0a89fd3e73c91d09988f06e18b8b281487fe4883a1bc22a48951b9f42fd19894"
+    },
+    {
+      "path": "windows/include/flutter_inappwebview_windows/flutter_inappwebview_windows_plugin_c_api.h",
+      "size": 646,
+      "sha256": "abbe75de4475cee9fd2e74d4265cca84e1ea7da828391dbee0af594364ce7e84"
+    },
+    {
+      "path": "windows/plugin_scripts_js/javascript_bridge_js.cpp",
+      "size": 493,
+      "sha256": "1d4f125ba896d106ba0c2e0cef9738cb6787825cbef373fc348681d9ed8024e6"
+    },
+    {
+      "path": "windows/plugin_scripts_js/javascript_bridge_js.h",
+      "size": 1594,
+      "sha256": "ffca8dc497830521dc22364e0dd9a66ee204082984b004f325d6f2f6eed26f4a"
+    },
+    {
+      "path": "windows/plugin_scripts_js/plugin_scripts_util.h",
+      "size": 707,
+      "sha256": "ba540c2808d31ad0ada82c8bc726b8bc038bdd8c9a821c06d738a2f230e690a4"
+    },
+    {
+      "path": "windows/test/flutter_inappwebview_windows_plugin_test.cpp",
+      "size": 1264,
+      "sha256": "c6b5bfbc4736a48411e2719c3f49bc9743f31613a6c069bac54d8a8b25b79b00"
+    },
+    {
+      "path": "windows/types/base_callback_result.h",
+      "size": 2262,
+      "sha256": "8925eb48c2a9ae09cc4ffdcc68ce4d88128f54324e6102ab14256184c1e55681"
+    },
+    {
+      "path": "windows/types/callbacks_complete.h",
+      "size": 858,
+      "sha256": "402c9a7c0f840ad5829e387e87bca9b86599d0ca45d614b868ee8b87cbae62b1"
+    },
+    {
+      "path": "windows/types/channel_delegate.cpp",
+      "size": 1093,
+      "sha256": "2b1975ef83e3751d02523be22d09643a04a9850d5828f850039c915df959f461"
+    },
+    {
+      "path": "windows/types/channel_delegate.h",
+      "size": 842,
+      "sha256": "915e0929776734fd4309a686c7ea38b5a92953c0549efbcf631b601809b6263e"
+    },
+    {
+      "path": "windows/types/content_world.cpp",
+      "size": 1648,
+      "sha256": "2858987fce56df9f941937699394e2bdb4c0a14d196960e6ab2064fd4e30c632"
+    },
+    {
+      "path": "windows/types/content_world.h",
+      "size": 1047,
+      "sha256": "a10db53ef09805a2ac6247814c1f75b84abbe38ba41f7d86da7edae98eb33a03"
+    },
+    {
+      "path": "windows/types/create_window_action.cpp",
+      "size": 930,
+      "sha256": "e4d7bba5a14055ac235d883355e59b1d89c6370d81f975a3d873829327cf11e0"
+    },
+    {
+      "path": "windows/types/create_window_action.h",
+      "size": 948,
+      "sha256": "19439bb8c508fe21dddd9ba84062636c27031e634ddc0c6800fb2dd6d67eaec8"
+    },
+    {
+      "path": "windows/types/custom_scheme_registration.cpp",
+      "size": 2290,
+      "sha256": "e8e1ccae308fe8471a4227e36d04fb6def74ff8089fa76f58e95039df8a6b877"
+    },
+    {
+      "path": "windows/types/custom_scheme_registration.h",
+      "size": 1075,
+      "sha256": "04a465c942e36f65f2bd2336631584aeca33108c0600cc1810936009a06ffa72"
+    },
+    {
+      "path": "windows/types/custom_scheme_response.cpp",
+      "size": 2286,
+      "sha256": "c20753dcbb5a12be39e2000b4fc269ecd1bdbf59e41f40ec1ec9b2a5c314d020"
+    },
+    {
+      "path": "windows/types/custom_scheme_response.h",
+      "size": 909,
+      "sha256": "f40fed0acec8920048bf9a2f88a0aed6b7efc7f0a06936e21e32188d4c0bcc0d"
+    },
+    {
+      "path": "windows/types/navigation_action.cpp",
+      "size": 766,
+      "sha256": "339da1cf5b167bdfa4d603ebe96c9503597e382ff40b77c83662bcb158e3ac74"
+    },
+    {
+      "path": "windows/types/navigation_action.h",
+      "size": 933,
+      "sha256": "c66c7de646bc7dc640d1e99ab1235d908c6fbbb9e1fbb5619bbd035a3da38b98"
+    },
+    {
+      "path": "windows/types/new_window_requested_args.cpp",
+      "size": 313,
+      "sha256": "dfa24a846183867594b87aac859cace05fef78d9134e4c5d2a7a6f9bf95d8f7f"
+    },
+    {
+      "path": "windows/types/new_window_requested_args.h",
+      "size": 644,
+      "sha256": "0d55f1f558afe61dec54a75871087b3217d6b0ead6204aa68ba37bc9299dcf97"
+    },
+    {
+      "path": "windows/types/permission_response.cpp",
+      "size": 770,
+      "sha256": "a4729b254355a33450b1b01429a6b4534776975fa8be1b3598c2fab324086090"
+    },
+    {
+      "path": "windows/types/permission_response.h",
+      "size": 1623,
+      "sha256": "d270b5ac3feaf3c2814ba9a1eeceae0c88fdc44f4fe40aab850530cf13b0e2ac"
+    },
+    {
+      "path": "windows/types/plugin_script.cpp",
+      "size": 918,
+      "sha256": "cf64dee3fe6f2ca0e2158486cd28f3543e53d592f201ee6acf4f5872294bfc87"
+    },
+    {
+      "path": "windows/types/plugin_script.h",
+      "size": 900,
+      "sha256": "6d291e9cef90d70a63e30e127140d8e52e7a852dc87e75e4c2e8534dcf0c7b2f"
+    },
+    {
+      "path": "windows/types/rect.cpp",
+      "size": 654,
+      "sha256": "af9c47dead5eca4883e98e7db535b7aeaf6eb9acc1fcf564401fb9e4777f95bd"
+    },
+    {
+      "path": "windows/types/rect.h",
+      "size": 873,
+      "sha256": "f2877305a7c3114d2370fb31167794b2d521951e46410d8371a237f0e4ea75cc"
+    },
+    {
+      "path": "windows/types/screenshot_configuration.cpp",
+      "size": 1583,
+      "sha256": "ab1e5e291026591198081e34435374272503ba9f8d73091d7886998f3d55305d"
+    },
+    {
+      "path": "windows/types/screenshot_configuration.h",
+      "size": 1035,
+      "sha256": "94cfe5b2ebaab5375b8b82fbc88b2d5a318ebfddcd224669d002c579790e884b"
+    },
+    {
+      "path": "windows/types/size_2d.cpp",
+      "size": 505,
+      "sha256": "16058aefa40b78742b55904539103218abd2a65dbee2505de873f3f230f2f637"
+    },
+    {
+      "path": "windows/types/size_2d.h",
+      "size": 790,
+      "sha256": "ef46bbe50e7e2bed3601ee944708b4846c5772bb785f78a8a137c0acd9cb6a03"
+    },
+    {
+      "path": "windows/types/ssl_certificate.cpp",
+      "size": 393,
+      "sha256": "dc5b9e6791b3692ebddf42e08e10e9225e9428563c7375e93d1c5d3636558e58"
+    },
+    {
+      "path": "windows/types/ssl_certificate.h",
+      "size": 487,
+      "sha256": "4cce8d94556c44d86079130a3bed49b0070cc10d26e01219f202f05c7d5e2587"
+    },
+    {
+      "path": "windows/types/url_request.cpp",
+      "size": 1036,
+      "sha256": "08ba12bc327a12c4c344e98bbf1113e3a876eab01c83da8275c2c506129038b4"
+    },
+    {
+      "path": "windows/types/url_request.h",
+      "size": 881,
+      "sha256": "b7c619775c05437032a6ca9395b35b955541191f8b647e44a21050720c48f3b0"
+    },
+    {
+      "path": "windows/types/user_script.cpp",
+      "size": 1162,
+      "sha256": "7eada4024d5005b1ccd58f3a0e9cac812247b72b7bc5529ee205c84b284b0c2b"
+    },
+    {
+      "path": "windows/types/user_script.h",
+      "size": 1105,
+      "sha256": "e80fe1e735ea108a4136b21ace9b464a739b58f95745012b0c52d8450440a613"
+    },
+    {
+      "path": "windows/types/web_history.cpp",
+      "size": 956,
+      "sha256": "a4c4e52de4372f3f15be8bf262f93d6da4775e942a3c74768fa40704a8ab9b6d"
+    },
+    {
+      "path": "windows/types/web_history.h",
+      "size": 771,
+      "sha256": "426d8dc8e3b655f9c170ce1b1ca9b6e6ca5809533db25fdbe075808ae916b8c5"
+    },
+    {
+      "path": "windows/types/web_history_item.cpp",
+      "size": 1318,
+      "sha256": "3b3734b0d453507fb5ce489f463107028baca4c8d37cd8bd67e920c201bd0ef9"
+    },
+    {
+      "path": "windows/types/web_history_item.h",
+      "size": 1050,
+      "sha256": "42d5af406ffad671e5bd029edacf3c8f0fa12d9ac97fe52dd5269504c8c58c72"
+    },
+    {
+      "path": "windows/types/web_resource_error.cpp",
+      "size": 656,
+      "sha256": "7c7651dd9e3563a07c767ca6516540834a81e22aa2fd2f946abb5d9ff80c01f8"
+    },
+    {
+      "path": "windows/types/web_resource_error.h",
+      "size": 1927,
+      "sha256": "ee1f115431b6c7cbbdaa455c1a31189f1c276646388bb1b0a37ac631f4b09349"
+    },
+    {
+      "path": "windows/types/web_resource_request.cpp",
+      "size": 2449,
+      "sha256": "ff4e9d29e277ca799d2a332f472c5bf2565c491f883d1879d6223500c1ab862a"
+    },
+    {
+      "path": "windows/types/web_resource_request.h",
+      "size": 1040,
+      "sha256": "0a61c07bc5337fc63fba42a8b0ac8869f1d84c7fafed40afb4386fd2ea8ea29e"
+    },
+    {
+      "path": "windows/types/web_resource_response.cpp",
+      "size": 3489,
+      "sha256": "9529c6cc513a8f8ada0650a081ed1be51a5e87dbd1eab93d090f642d0fa5d437"
+    },
+    {
+      "path": "windows/types/web_resource_response.h",
+      "size": 1393,
+      "sha256": "6183bdb7ecc90d2b0d05f08604efbd28e928e93064f223f92f9fd8b9431b6af8"
+    },
+    {
+      "path": "windows/types/window_features.cpp",
+      "size": 2259,
+      "sha256": "b1fbabab0afde1c9c5b7e22b2c68256c99fe9e59cee09364916a3ce8c85dd58a"
+    },
+    {
+      "path": "windows/types/window_features.h",
+      "size": 1145,
+      "sha256": "aeaa5b67514c21b6073bdb8004446f9ef26ac3111218f7e30576c24ec6e20cad"
+    },
+    {
+      "path": "windows/utils/base64.cpp",
+      "size": 8887,
+      "sha256": "1b09ee7e12ba6eb010211b6e3884753673837aa75b1a3b3dc3dc734f1f81f6b6"
+    },
+    {
+      "path": "windows/utils/base64.h",
+      "size": 1173,
+      "sha256": "9d65391c370a821af8a47a474b6b1cb942ade193363e48bc25010a3d7124d98f"
+    },
+    {
+      "path": "windows/utils/flutter.h",
+      "size": 7381,
+      "sha256": "f715d6ac6e846976f1f25feb27a9dc3cc2cb18af15591c4cf92120276fefae04"
+    },
+    {
+      "path": "windows/utils/log.h",
+      "size": 3455,
+      "sha256": "1ee5e22d3432523a384ab71f57ed2c427a77fa2d8251c5beac0a5da726f184e3"
+    },
+    {
+      "path": "windows/utils/map.h",
+      "size": 1047,
+      "sha256": "983ad44dbb2bc8c22bb72629f826abc7af779378f7abee4b9b210eb65a1ee896"
+    },
+    {
+      "path": "windows/utils/strconv.h",
+      "size": 17223,
+      "sha256": "a711580cdc7321262cc9cb7c5b426c154fb0a6ca7a795e1c968f7455625295bb"
+    },
+    {
+      "path": "windows/utils/string.h",
+      "size": 6220,
+      "sha256": "cdb61074014333331504a587b540d258a9195445048148da027f3188efdbae01"
+    },
+    {
+      "path": "windows/utils/util.h",
+      "size": 1075,
+      "sha256": "2d255e67591835935c0a69028359dc1b28f396439e3dee86533d6e8e07a7dcd4"
+    },
+    {
+      "path": "windows/utils/vector.h",
+      "size": 3327,
+      "sha256": "35842f5d3cf013a7e9dfef7db9b22cf7464e8fff06521ed65cff94b76607338e"
+    },
+    {
+      "path": "windows/webview_environment/webview_environment.cpp",
+      "size": 4216,
+      "sha256": "bef5ef5f54fcd2c3dc043ace1db9e7645021bb0f2c143cd23e105fd5c2bfa269"
+    },
+    {
+      "path": "windows/webview_environment/webview_environment.h",
+      "size": 1604,
+      "sha256": "03776fc681389b90f91b904a644b902da9d2a8b3858240b85c524ec3ea18a3d3"
+    },
+    {
+      "path": "windows/webview_environment/webview_environment_channel_delegate.cpp",
+      "size": 1748,
+      "sha256": "5b8395bf644ee0b485cff36042584e247bffc5d44423f3036aae01a59c8a1955"
+    },
+    {
+      "path": "windows/webview_environment/webview_environment_channel_delegate.h",
+      "size": 860,
+      "sha256": "0c531754d4f72685a05828a78bfe70f21e4f091396867ab3a3fa24454ceb49e2"
+    },
+    {
+      "path": "windows/webview_environment/webview_environment_manager.cpp",
+      "size": 5139,
+      "sha256": "e05330be2a9bf83aed578189b8e2bb505b530fce6854f32e2a46f07a46ae9659"
+    },
+    {
+      "path": "windows/webview_environment/webview_environment_manager.h",
+      "size": 1889,
+      "sha256": "fc00ff90465ecc251e75ae140093f798e0304a06549af13bc32dfeec4b7b591c"
+    },
+    {
+      "path": "windows/webview_environment/webview_environment_settings.cpp",
+      "size": 1867,
+      "sha256": "ff19e8d96a400a4c886bdd01a4fb4dabcfa8da7d85fb0896a1beb1afaaee10db"
+    },
+    {
+      "path": "windows/webview_environment/webview_environment_settings.h",
+      "size": 1216,
+      "sha256": "3a1896ab3cab2b61cb0260c3b6ed4aff1a0b656c560b55d9e487451b4bdbe6db"
+    }
+  ]
+}

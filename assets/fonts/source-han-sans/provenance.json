@@ -1,0 +1,24 @@
+{
+  "upstream": "https://github.com/adobe-fonts/source-han-sans",
+  "commit": "a4f7cf94edfb9d7ffbdfc4841de276358bd7e0f2",
+  "files": [
+    {
+      "path": "assets/fonts/source-han-sans/SourceHanSansCN-Regular.otf",
+      "size": 8429224,
+      "sha256": "e2bc8a2e7f37474b774fff8db758681ece40bb6947a90d571bce9dd60671a8e4",
+      "url": "https://raw.githubusercontent.com/adobe-fonts/source-han-sans/a4f7cf94edfb9d7ffbdfc4841de276358bd7e0f2/SubsetOTF/CN/SourceHanSansCN-Regular.otf"
+    },
+    {
+      "path": "assets/fonts/source-han-sans/SourceHanSansCN-Medium.otf",
+      "size": 8406556,
+      "sha256": "a94e558a2fe972bee4f46bce0843abff37063fd68c33f1e7d9058f6f09432b01",
+      "url": "https://raw.githubusercontent.com/adobe-fonts/source-han-sans/a4f7cf94edfb9d7ffbdfc4841de276358bd7e0f2/SubsetOTF/CN/SourceHanSansCN-Medium.otf"
+    },
+    {
+      "path": "assets/fonts/source-han-sans/SourceHanSansCN-Bold.otf",
+      "size": 8569308,
+      "sha256": "62383707c086a32f3afd5e293f34c7eff64c7fea31f579fdc6cbe34d920519a6",
+      "url": "https://raw.githubusercontent.com/adobe-fonts/source-han-sans/a4f7cf94edfb9d7ffbdfc4841de276358bd7e0f2/SubsetOTF/CN/SourceHanSansCN-Bold.otf"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "model": "PP-OCRv6_small",
+  "onnxruntime": "1.21.0",
+  "initializationMs": 251,
+  "tests": [
+    {
+      "name": "bilingual.png",
+      "stridePadding": 0,
+      "elapsedMs": 611,
+      "lineCount": 6,
+      "textMatches": true
+    },
+    {
+      "name": "bilingual.png",
+      "stridePadding": 16,
+      "elapsedMs": 567,
+      "lineCount": 6,
+      "textMatches": true
+    },
+    {
+      "name": "bilingual_skew.png",
+      "stridePadding": 0,
+      "elapsedMs": 534,
+      "lineCount": 6,
+      "textMatches": true
+    },
+    {
+      "name": "transparentWhiteComposite",
+      "passed": true
+    },
+    {
+      "name": "shortBufferRejected",
+      "passed": true
+    },
+    {
+      "name": "inferenceCancelled",
+      "returnAfterCancelMs": 11,
+      "passed": true
+    },
+    {
+      "name": "reuseAfterCancel",
+      "passed": true
+    }
+  ],
+  "fixtureSha256": "0226516f7d7bab1c0319d8f305c90692481ec60818cbd2daae0d24cfc6cd6975",
+  "scope": "Controlled rasterized printed-page fixtures; not real-book or PDF-selection acceptance."
+}

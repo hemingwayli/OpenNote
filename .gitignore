@@ -1,0 +1,46 @@
+# 本机工具、依赖与产物不作为应用数据。
+.local/
+AGENTS.override.md
+AGENT.md
+AGENTS.md
+# 实际工具配置仅用于本机，公开可移植示例。
+/.codex/*
+/.vscode/settings.json
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+id_rsa
+id_ed25519
+/backups/
+*.backup.zip
+.dart_tool/
+.widget_preview/
+test/goldens/failures/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+dist/
+# 用户资料生成的 PDF 不进入源码或候选分发包。
+/output/pdf/
+tools/verification/local-release-*/
+tools/verification/capacity-debug-report.json
+tools/verification/native-probe-smoke.json
+coverage/
+native/third_party/
+native/build/
+native/runtime/
+native/runtime-ppocrv6-small/
+assets/ocr/models/
+*.log
+*.db
+*.db-shm
+*.db-wal
+windows/flutter/ephemeral/
+**/.DS_Store
+.idea/
+*.iml
+__pycache__/
+*.pyc

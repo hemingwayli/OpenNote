@@ -1,0 +1,232 @@
+{
+  "compressed_geometry.pdf": {
+    "sha256": "92aeed29300afb8bbcb0535d8428cd9192827ebc75c3c353c2582d2769c3da92",
+    "pages": 4,
+    "geometry": [
+      {
+        "rotation": 0,
+        "mediaBox": [
+          -30,
+          -50,
+          650,
+          850
+        ],
+        "cropBox": [
+          40,
+          60,
+          570,
+          750
+        ],
+        "userUnit": 1.5
+      },
+      {
+        "rotation": 90,
+        "mediaBox": [
+          -30,
+          -50,
+          650,
+          850
+        ],
+        "cropBox": [
+          40,
+          60,
+          570,
+          750
+        ],
+        "userUnit": 1.5
+      },
+      {
+        "rotation": 180,
+        "mediaBox": [
+          -30,
+          -50,
+          650,
+          850
+        ],
+        "cropBox": [
+          40,
+          60,
+          570,
+          750
+        ],
+        "userUnit": 1.5
+      },
+      {
+        "rotation": 270,
+        "mediaBox": [
+          -30,
+          -50,
+          650,
+          850
+        ],
+        "cropBox": [
+          40,
+          60,
+          570,
+          750
+        ],
+        "userUnit": 1.5
+      }
+    ]
+  },
+  "mixed.pdf": {
+    "sha256": "b1d0f236f3e02fb5261a1a2bbb95eb785fc520d16c45ed1a0f6914b8cd257f54",
+    "pages": 3
+  },
+  "native.pdf": {
+    "sha256": "db1736ee7a1e41cea645265c0025013fb6335e0b50f70cf24e1c3eb6b5819341",
+    "pages": 2
+  },
+  "rotate_cropbox.pdf": {
+    "sha256": "5b9ab143a9bdfd1b0a3b963d8bbfca023b687752451f7fc4b433ddc8eecb8f41",
+    "pages": 4,
+    "geometry": [
+      {
+        "rotation": 0,
+        "mediaBox": [
+          -30,
+          -50,
+          650,
+          850
+        ],
+        "cropBox": [
+          40,
+          60,
+          570,
+          750
+        ],
+        "userUnit": 1.5
+      },
+      {
+        "rotation": 90,
+        "mediaBox": [
+          -30,
+          -50,
+          650,
+          850
+        ],
+        "cropBox": [
+          40,
+          60,
+          570,
+          750
+        ],
+        "userUnit": 1.5
+      },
+      {
+        "rotation": 180,
+        "mediaBox": [
+          -30,
+          -50,
+          650,
+          850
+        ],
+        "cropBox": [
+          40,
+          60,
+          570,
+          750
+        ],
+        "userUnit": 1.5
+      },
+      {
+        "rotation": 270,
+        "mediaBox": [
+          -30,
+          -50,
+          650,
+          850
+        ],
+        "cropBox": [
+          40,
+          60,
+          570,
+          750
+        ],
+        "userUnit": 1.5
+      }
+    ]
+  },
+  "scanned.pdf": {
+    "sha256": "3fd09c0d5cde55b080844d64884a34a633857acd994550e0b09c36121067ad76",
+    "pages": 1
+  },
+  "links.pdf": {
+    "sha256": "8d25e640e5c5eef785b72328f5f9fc5ec296526ebf28dcaecd1b9b51a09e3655",
+    "pages": 2,
+    "links": [
+      {
+        "pageIndex": 0,
+        "rect": [
+          70.0,
+          690.0,
+          360.0,
+          724.0
+        ],
+        "type": "goTo",
+        "destinationPageIndex": 1,
+        "destinationCommand": "/XYZ",
+        "destinationPdfPoint": [
+          70.0,
+          700.0
+        ]
+      },
+      {
+        "pageIndex": 0,
+        "rect": [
+          70.0,
+          620.0,
+          360.0,
+          654.0
+        ],
+        "type": "goTo",
+        "destinationPageIndex": 1,
+        "destinationCommand": "/XYZ",
+        "destinationPdfPoint": [
+          70.0,
+          700.0
+        ]
+      },
+      {
+        "pageIndex": 0,
+        "rect": [
+          70.0,
+          536.0,
+          450.0,
+          574.0
+        ],
+        "type": "uri",
+        "uri": "https://example.org/opennote-fixture"
+      },
+      {
+        "pageIndex": 0,
+        "rect": [
+          70.0,
+          320.0,
+          430.0,
+          354.0
+        ],
+        "type": "goTo",
+        "destinationPageIndex": 1,
+        "destinationCommand": "/XYZ",
+        "expectedNavigationFailure": true
+      },
+      {
+        "pageIndex": 1,
+        "rect": [
+          70.0,
+          690.0,
+          360.0,
+          724.0
+        ],
+        "type": "goTo",
+        "destinationPageIndex": 0,
+        "destinationCommand": "/XYZ",
+        "destinationPdfPoint": [
+          70.0,
+          700.0
+        ]
+      }
+    ]
+  }
+}

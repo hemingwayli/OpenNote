@@ -1,0 +1,42 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "OpenNote · Windows 调试（独立资料库）",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "cwd": "${workspaceFolder}",
+      "deviceId": "windows",
+      "flutterMode": "debug",
+      "toolArgs": ["--no-pub", "--track-widget-creation", "--print-dtd"],
+      "args": ["--data-dir=${env:LOCALAPPDATA}/OpenNote-Development/vscode-debug"],
+      "env": {"CMAKE_BUILD_PARALLEL_LEVEL": "1"}
+    },
+    {
+      "name": "OpenNote · Windows 性能（独立资料库）",
+      "type": "dart",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "cwd": "${workspaceFolder}",
+      "deviceId": "windows",
+      "flutterMode": "profile",
+      "toolArgs": ["--no-pub", "--print-dtd"],
+      "args": ["--data-dir=${env:LOCALAPPDATA}/OpenNote-Development/vscode-profile"],
+      "env": {"CMAKE_BUILD_PARALLEL_LEVEL": "1"}
+    },
+    {
+      "name": "OpenNote · 附加到现有调试程序",
+      "type": "dart",
+      "request": "attach",
+      "vmServiceUri": "${input:vmServiceUri}"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "vmServiceUri",
+      "type": "promptString",
+      "description": "粘贴 flutter run 输出的 Dart VM Service 地址"
+    }
+  ]
+}

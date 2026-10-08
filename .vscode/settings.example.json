@@ -1,0 +1,8 @@
+{
+  "dart.addSdkToTerminalPath": true,
+  "[dart]": {
+    "editor.defaultFormatter": "Dart-Code.dart-code",
+    "editor.formatOnSave": true
+  },
+  "files.encoding": "utf8"
+}

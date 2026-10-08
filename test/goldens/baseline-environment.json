@@ -1,0 +1,73 @@
+{
+  "flutterVersion": "3.47.6",
+  "dartVersion": "3.13.5",
+  "platform": "windows",
+  "pdfSha256": "584a3a0ccdaef666d62ec185ad24c20f207eb9b9661b42decf087183dde25a1a",
+  "fonts": [
+    {
+      "family": "MaterialIcons",
+      "path": "{flutterSdk}/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf",
+      "sha256": "d9865b671a09d683d13a863089d8825e0f61a37696ce5d7d448bc8023aa62453"
+    },
+    {
+      "family": "Segoe UI",
+      "path": "C:/Windows/Fonts/segoeui.ttf",
+      "sha256": "8134dbcd09e7b123c9a7f229d49cffbcb01352cc72ea5e1076b65d0dca9f73cd"
+    },
+    {
+      "family": "Source Han Sans CN",
+      "path": "assets/fonts/source-han-sans/SourceHanSansCN-Regular.otf",
+      "sha256": "e2bc8a2e7f37474b774fff8db758681ece40bb6947a90d571bce9dd60671a8e4"
+    },
+    {
+      "family": "Source Han Sans CN",
+      "path": "assets/fonts/source-han-sans/SourceHanSansCN-Medium.otf",
+      "sha256": "a94e558a2fe972bee4f46bce0843abff37063fd68c33f1e7d9058f6f09432b01"
+    },
+    {
+      "family": "Source Han Sans CN",
+      "path": "assets/fonts/source-han-sans/SourceHanSansCN-Bold.otf",
+      "sha256": "62383707c086a32f3afd5e293f34c7eff64c7fea31f579fdc6cbe34d920519a6"
+    }
+  ],
+  "profiles": [
+    {
+      "logicalSize": [
+        1920,
+        1080
+      ],
+      "dpr": 1,
+      "label": "1920x1080"
+    },
+    {
+      "logicalSize": [
+        1280,
+        720
+      ],
+      "dpr": 1,
+      "label": "1280x720"
+    },
+    {
+      "logicalSize": [
+        1280,
+        720
+      ],
+      "dpr": 1.5,
+      "label": "1920x1080-at150"
+    }
+  ],
+  "states": [
+    "home-empty",
+    "home-folders",
+    "home-search",
+    "empty",
+    "canvas",
+    "editor",
+    "outline",
+    "cards",
+    "search",
+    "naming",
+    "trash"
+  ],
+  "pdfPath": "tools/fixtures/pdf/ui-reading.pdf"
+}

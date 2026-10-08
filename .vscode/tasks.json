@@ -1,0 +1,150 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "OpenNote: 日常快速检查",
+      "type": "process",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "${workspaceFolder}/tools/dev/flutter-dev.ps1",
+        "-Action",
+        "check"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "OpenNote: 按模块验证",
+      "type": "process",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "${workspaceFolder}/tools/dev/flutter-dev.ps1",
+        "-Action",
+        "check",
+        "-Scope",
+        "${input:verificationScope}"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "OpenNote: 全量验收（大改或发布时）",
+      "type": "process",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "${workspaceFolder}/tools/dev/flutter-dev.ps1",
+        "-Action",
+        "check",
+        "-Scope",
+        "full"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "OpenNote: 组件实时预览",
+      "type": "process",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "${workspaceFolder}/tools/dev/flutter-dev.ps1",
+        "-Action",
+        "preview"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "OpenNote: 启动 DevTools",
+      "type": "process",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "${workspaceFolder}/tools/dev/flutter-dev.ps1",
+        "-Action",
+        "devtools"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "OpenNote: 截图比较（1920×1080）",
+      "type": "process",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "${workspaceFolder}/tools/dev/flutter-dev.ps1",
+        "-Action",
+        "golden"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "OpenNote: 更新 1920×1080 基线（需查看变化图片）",
+      "type": "process",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "${workspaceFolder}/tools/dev/flutter-dev.ps1",
+        "-Action",
+        "update-goldens"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "OpenNote: 静态分析",
+      "type": "process",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "${workspaceFolder}/tools/dev/flutter-dev.ps1",
+        "-Action",
+        "analyze"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "OpenNote: 验证 Dart Flutter MCP",
+      "type": "process",
+      "command": "pwsh",
+      "args": [
+        "-NoProfile",
+        "-File",
+        "${workspaceFolder}/tools/dev/flutter-dev.ps1",
+        "-Action",
+        "mcp-check"
+      ],
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "verificationScope",
+      "type": "pickString",
+      "description": "选择本轮实际改动模块",
+      "options": [
+        "home",
+        "map",
+        "reader",
+        "pdf",
+        "epub",
+        "data",
+        "controller",
+        "workspace",
+        "ocr",
+        "tools"
+      ],
+      "default": "home"
+    }
+  ]
+}

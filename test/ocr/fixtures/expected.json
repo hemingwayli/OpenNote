@@ -1,0 +1,58 @@
+{
+  "lines": [
+    {
+      "text": "离线阅读与知识整理",
+      "bounds": [
+        95,
+        105,
+        500,
+        149
+      ]
+    },
+    {
+      "text": "扫描书页可以选择文字并制作独立卡片。",
+      "bounds": [
+        95,
+        250,
+        905,
+        294
+      ]
+    },
+    {
+      "text": "复制卡片后，修改副本不会影响原卡片。",
+      "bounds": [
+        95,
+        395,
+        905,
+        440
+      ]
+    },
+    {
+      "text": "OpenNote keeps your documents on this device.",
+      "bounds": [
+        95,
+        542,
+        1145,
+        589
+      ]
+    },
+    {
+      "text": "Select text, create notes, and return to the source.",
+      "bounds": [
+        95,
+        687,
+        1164,
+        729
+      ]
+    },
+    {
+      "text": "Offline OCR works with Chinese and English books.",
+      "bounds": [
+        95,
+        832,
+        1195,
+        879
+      ]
+    }
+  ]
+}

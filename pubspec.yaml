@@ -1,0 +1,59 @@
+name: opennote
+description: 离线 PDF／EPUB 阅读、摘录与脑图学习工作台。
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.13.0 <4.0.0'
+  flutter: '>=3.47.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  pdfrx: 2.6.5
+  dart_pdf_reader: 2.2.0
+  material_ui: 1.5.0
+  drift: 2.35.1
+  sqlite3: 3.7.0
+  archive: 4.3.0
+  crypto: 3.0.7
+  uuid: 4.6.0
+  path: 1.9.1
+  path_provider: 2.1.6
+  file_selector: 1.1.0
+  ffi: 2.2.0
+  flutter_inappwebview: 6.1.5
+  flutter_inappwebview_windows: 0.6.0
+  xml: 6.6.1
+
+dependency_overrides:
+  # 固定上游版本的本地生命周期修正，源码与许可随项目保存。
+  flutter_inappwebview_windows:
+    path: third_party/flutter_inappwebview_windows
+
+dev_dependencies:
+  flutter_driver:
+    sdk: flutter
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  flutter_lints: 6.0.0
+  file_selector_platform_interface: 2.7.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/fonts/source-han-sans/LICENSE.txt
+    - assets/epub/
+  fonts:
+    - family: Source Han Sans CN
+      fonts:
+        - asset: assets/fonts/source-han-sans/SourceHanSansCN-Regular.otf
+          weight: 400
+        - asset: assets/fonts/source-han-sans/SourceHanSansCN-Medium.otf
+          weight: 500
+        - asset: assets/fonts/source-han-sans/SourceHanSansCN-Bold.otf
+          weight: 700
