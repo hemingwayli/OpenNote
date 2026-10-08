@@ -20,15 +20,15 @@ OpenNote is an offline PDF/EPUB reading and knowledge workspace for Windows, lic
 
 ## 安装与快速开始
 
-普通用户使用现成的 **Windows Release 包**，无需安装 Flutter、Python、C++ 工具链或自行编译。GitHub 发布后，在仓库的 **Releases** 页面选择以下附件：
+普通用户使用现成的 **Windows Release 包**，无需安装 Flutter、Python、C++ 工具链或自行编译。从 [最新 Release](https://github.com/hemingwayli/OpenNote/releases/latest) 或 [全部版本](https://github.com/hemingwayli/OpenNote/releases) 下载以下附件：
 
 | 文件 | 用途 |
 | --- | --- |
-| `OpenNote-<版本>-Windows-x64-Setup.exe` | 推荐：安装后使用，支持卸载 |
-| `OpenNote-<版本>-Windows-x64.zip` | 便携版：完整解压后运行 `OpenNote/opennote.exe` |
-| `OpenNote-<版本>-Source.zip` | 源码归档，供开发者使用 |
+| [OpenNote-0.1.0-Windows-x64-Setup.exe](https://github.com/hemingwayli/OpenNote/releases/download/v0.1.0/OpenNote-0.1.0-Windows-x64-Setup.exe) | 推荐：安装后使用，支持卸载 |
+| [OpenNote-0.1.0-Windows-x64.zip](https://github.com/hemingwayli/OpenNote/releases/download/v0.1.0/OpenNote-0.1.0-Windows-x64.zip) | 便携版：完整解压后运行 `OpenNote/opennote.exe` |
+| [OpenNote-0.1.0-Source.zip](https://github.com/hemingwayli/OpenNote/releases/download/v0.1.0/OpenNote-0.1.0-Source.zip) | 源码归档，供开发者使用 |
 
-当前版本为 `0.1.0`。维护者负责生成、审查和上传安装包及便携包；GitHub 自动生成的源码压缩包不能代替可运行的 Windows 包。首次 GitHub Release 尚未公开时，以实际发布状态为准。
+当前公开版本为 [v0.1.0](https://github.com/hemingwayli/OpenNote/releases/tag/v0.1.0)。安装包与便携包均可直接使用；文件大小和 SHA-256 见 [分发清单](https://github.com/hemingwayli/OpenNote/releases/download/v0.1.0/release-manifest.json)与 [SHA256SUMS](https://github.com/hemingwayli/OpenNote/releases/download/v0.1.0/SHA256SUMS.txt)。
 
 完整安装包或便携包包含应用和离线 OCR 依赖。便携包须完整解压后运行 `OpenNote/opennote.exe`，不能只复制 EXE。EPUB 阅读还需要系统 **Microsoft Edge WebView2 Runtime**；缺少时 PDF 阅读仍可使用。
 
@@ -62,6 +62,7 @@ $entry = Join-Path (Get-Location).Path 'tools/dev/flutter_dev.py'
 - EPUB 支持无 DRM 的 EPUB 2／3；不处理 DRM 授权，书籍脚本、外网资源及音视频不执行或加载。
 - OCR 面向中英文印刷文字；复杂版面、旧字形、手写及特殊公式不能保证识别准确。
 - 批注与笔记保存在应用资料库，不直接写回原 PDF／EPUB。
+- 自定义资料目录建议使用较短路径；深层目录可能受 Windows PDF 引擎的路径长度限制。
 - 当前不包含云同步、多人协作、云端 AI、平板压感手写或完整 Xmind 文件交换。
 - 各项检查的通过范围以具体源码、产物和运行环境为准。局部检查、历史结果与截图不能代替完整运行验收。
 
