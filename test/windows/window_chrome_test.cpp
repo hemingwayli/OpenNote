@@ -60,6 +60,26 @@ void Release(HWND window, bool inside = true) {
 
 int main() {
   SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+  MONITORINFO primary{sizeof(MONITORINFO)};
+  Check(GetMonitorInfo(MonitorFromWindow(nullptr, MONITOR_DEFAULTTOPRIMARY),
+                       &primary), "获取主屏工作区");
+  for (const auto& size : {Win32Window::Size{1440, 900},
+                           Win32Window::Size{10000, 10000}}) {
+    ChromeWindow centered;
+    Check(centered.Create(L"OpenNote centered startup regression",
+                          {0, 0}, size, true), "创建居中启动窗口");
+    RECT bounds{};
+    Check(GetWindowRect(centered.GetHandle(), &bounds), "读取启动窗口边界");
+    Check(abs(bounds.left + bounds.right - primary.rcWork.left -
+              primary.rcWork.right) <= 1 &&
+          abs(bounds.top + bounds.bottom - primary.rcWork.top -
+              primary.rcWork.bottom) <= 1,
+          "普通尺寸及超大尺寸均在主屏工作区居中");
+    Check(bounds.left >= primary.rcWork.left && bounds.top >= primary.rcWork.top &&
+          bounds.right <= primary.rcWork.right && bounds.bottom <= primary.rcWork.bottom,
+          "高 DPI 下启动窗口完整位于工作区内");
+    centered.Destroy();
+  }
   ChromeWindow window;
   if (!window.Create(L"OpenNote window chrome regression",
                       {40, 40}, {1100, 720})) return 1;

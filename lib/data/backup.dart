@@ -115,7 +115,7 @@ Future<void> _encodeBackup(
     encodeJson({
       'formatVersion': 1,
       'schemaVersion': currentDatabaseVersion,
-      'applicationVersion': '0.1.0',
+      'applicationVersion': '0.1.2',
       'createdAt': DateTime.now().toUtc().toIso8601String(),
       'includesRecycleBin': true,
       'files': entries,

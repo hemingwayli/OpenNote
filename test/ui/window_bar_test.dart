@@ -50,13 +50,73 @@ void main() {
     child: const OpenNoteWindowDrag(child: SizedBox.expand()),
   );
 
+  testWidgets('首页标题栏最大化后整条空白高度都能拖动', (tester) async {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(WindowFullscreen.channel, (call) async {
+          calls.add(call);
+          return call.method == 'setChromeRegions'
+              ? WindowChrome.maximized.value
+              : null;
+        });
+    await tester.binding.setSurfaceSize(const Size(1440, 900));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(
+      app(
+        OpenNoteWindowBar(
+          child: OpenNoteWindowDrag(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: const Row(
+                children: [
+                  Icon(Icons.auto_stories_outlined, size: 22),
+                  SizedBox(width: 12),
+                  Text('OpenNote', style: TextStyle(fontSize: 16)),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    WindowChrome.maximized.value = true;
+    await tester.binding.setSurfaceSize(const Size(2293, 912));
+    await tester.pumpAndSettle();
+    final regions =
+        calls.lastWhere((c) => c.method == 'setChromeRegions').arguments
+            as List;
+    final caption = regions
+        .where((r) => r['role'] == 0.0)
+        .map((r) => Rect.fromLTWH(r['x'], r['y'], r['width'], r['height']))
+        .toList();
+    for (final x in [100.0, 1800.0, 2100.0, 2163.0]) {
+      for (final y in [2.0, 28.0, 54.0]) {
+        expect(
+          caption.any((rect) => rect.contains(Offset(x, y))),
+          isTrue,
+          reason: '标题栏空白 ($x, $y) 应交给原生拖动',
+        );
+      }
+    }
+    for (final tooltip in ['最小化', '还原窗口', '关闭窗口']) {
+      expect(
+        caption.any(
+          (rect) => rect.contains(tester.getCenter(find.byTooltip(tooltip))),
+        ),
+        isFalse,
+        reason: '$tooltip 按钮不能触发窗口拖动',
+      );
+    }
+    expect(tester.takeException(), isNull);
+  }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
+
   testWidgets('窗口栏只将标题空白与最大化按钮交给原生命中', (tester) async {
     await tester.pumpWidget(app(bar()));
     await tester.pumpAndSettle();
     final regions =
         calls.lastWhere((c) => c.method == 'setChromeRegions').arguments
             as List;
-    expect(regions, hasLength(2));
+    expect(regions, hasLength(3));
     final maximum = regions.singleWhere((r) => r['role'] == 1.0) as Map;
     final rect = Rect.fromLTWH(
       maximum['x'],

@@ -19,7 +19,7 @@ Future<void> runOfflineCheck({
   bool auditExisting = false,
 }) async {
   final report = <String, Object?>{
-    'version': '0.1.0',
+    'version': '0.1.2',
     'success': false,
     'runtimeExecutable': Platform.resolvedExecutable,
     'startedAt': DateTime.now().toUtc().toIso8601String(),

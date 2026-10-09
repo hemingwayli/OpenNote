@@ -22,7 +22,6 @@ ASSET_PATHS = (
     'tools/fixtures/pdf/native.pdf',
     'test/ocr/fixtures/bilingual.png',
 )
-ARCHIVE_NAME = 'OpenNote-0.1.0-Source.zip'
 
 _spec = importlib.util.spec_from_file_location(
     'opennote_source_package_test', PROJECT_ROOT / 'tools' / 'package_windows.py'
@@ -30,6 +29,7 @@ _spec = importlib.util.spec_from_file_location(
 assert _spec is not None and _spec.loader is not None
 package_windows = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(package_windows)
+ARCHIVE_NAME = f'OpenNote-{package_windows.VERSION}-Source.zip'
 
 
 class SourceArchiveTest(unittest.TestCase):

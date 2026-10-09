@@ -14,6 +14,7 @@ class OpenNoteViewSwitch extends StatelessWidget {
     this.icons,
     this.expand = false,
     this.iconOnly = false,
+    this.horizontalPadding = 10,
   });
   final bool value;
   final List<String> labels;
@@ -21,6 +22,7 @@ class OpenNoteViewSwitch extends StatelessWidget {
   final ValueChanged<bool> onChanged;
   final bool expand;
   final bool iconOnly;
+  final double horizontalPadding;
 
   @override
   Widget build(BuildContext context) => DecoratedBox(
@@ -50,7 +52,7 @@ class OpenNoteViewSwitch extends StatelessWidget {
         child: TextButton(
           style: TextButton.styleFrom(
             minimumSize: Size(iconOnly ? 36 : 52, 36),
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
             foregroundColor: selected
                 ? OpenNoteTokens.text
                 : OpenNoteTokens.secondary,

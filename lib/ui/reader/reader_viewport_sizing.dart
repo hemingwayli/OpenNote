@@ -7,8 +7,23 @@ enum _FitMode { width, page, manual }
 class ReaderViewportSizing extends PdfViewerSizeDelegateProvider {
   _ReaderViewportDelegate? _active;
 
+  bool get isApplying => _active?._applying ?? false;
+
   void fitWidth() => _active?.fit(_FitMode.width);
   void fitPage() => _active?.fit(_FitMode.page);
+
+  /// 目录只提供位置，缩放与适配模式继续由阅读器决定。
+  bool goToOutline({
+    required int pageNumber,
+    double? documentX,
+    double? documentY,
+  }) =>
+      _active?.goToOutline(
+        pageNumber: pageNumber,
+        documentX: documentX,
+        documentY: documentY,
+      ) ??
+      false;
 
   @override
   PdfViewerSizeDelegate create() => _active = _ReaderViewportDelegate(this);
@@ -75,6 +90,63 @@ class _ReaderViewportDelegate extends PdfViewerSizeDelegateLegacy {
     _mode = mode;
     viewer.stopInteractiveViewerAnimation();
     _apply(() => viewer.value = matrix);
+  }
+
+  bool goToOutline({
+    required int pageNumber,
+    double? documentX,
+    double? documentY,
+  }) {
+    final viewer = _viewer;
+    if (viewer == null ||
+        !viewer.isReady ||
+        pageNumber < 1 ||
+        pageNumber > viewer.pageCount) {
+      return false;
+    }
+    final page = viewer.layout.pageLayouts[pageNumber - 1];
+    final fit = _mode == _FitMode.manual ? null : _fitMatrix(_mode, pageNumber);
+    final zoom = (fit?.storage[0] ?? viewer.currentZoom).clamp(.1, 8.0);
+    Matrix4 matrix;
+    if (_mode == _FitMode.page && fit != null) {
+      // 整页模式始终容纳完整页面，不以标题位置裁掉页首。
+      matrix = fit;
+    } else {
+      final visible = viewer.visibleRect;
+      final oldPage = viewer.layout.pageLayouts[(viewer.pageNumber ?? 1) - 1];
+      final width = viewer.viewSize.width / zoom;
+      var left = _mode == _FitMode.manual
+          ? page.left + visible.left - oldPage.left
+          : page.center.dx - width / 2;
+      if (_mode == _FitMode.manual && documentX != null) {
+        final padding = 16 / zoom;
+        if (documentX < left + padding) {
+          left = documentX - padding;
+        } else if (documentX > left + width - padding) {
+          left = documentX + padding - width;
+        }
+      }
+      matrix = viewer.calcMatrixFor(
+        Offset(
+          left + width / 2,
+          (documentY ?? page.top) -
+              16 / zoom +
+              viewer.viewSize.height / zoom / 2,
+        ),
+        zoom: zoom,
+        viewSize: viewer.viewSize,
+      );
+    }
+    matrix = viewer.calcMatrixForClampedToNearestBoundary(
+      matrix,
+      viewSize: viewer.viewSize,
+    );
+    viewer.stopInteractiveViewerAnimation();
+    _apply(() {
+      viewer.value = matrix;
+      viewer.setCurrentPageNumber(pageNumber);
+    });
+    return true;
   }
 
   @override

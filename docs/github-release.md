@@ -35,7 +35,7 @@ $audit = Join-Path (Get-Location).Path 'tools/release/audit_open_source.py'
 
 ## 现成 Release 包
 
-- 使用 [Windows 构建和打包](build-windows.md) 生成同一版本的安装包、便携包和源码包。版本以 `pubspec.yaml`、打包配置及实际应用身份核对；当前打包工具仍有固定版本字段，升级时必须同步修正。
+- 使用 [Windows 构建和打包](build-windows.md) 生成同一版本的安装包、便携包和源码包。打包版本与文件名读取 `pubspec.yaml`，并与实际应用身份核对；升级时同步应用关于页、备份元数据和离线自检版本。
 - 保留对应提交、构建命令／结果、产物大小和 SHA-256。二进制必须能追溯到本次源码，已有包缺少来源证据时不能冒充重新构建。
 - 验证便携包和安装包实际输入／展开内容、OCR／PDF／EPUB 依赖、模型与许可完整。安装测试使用独立资料库／测试环境，遵守已有正式安装保护，不覆盖用户资料。
 - PDB 和 Flutter 测试清单不得分发。仅删除 PDB 文件不足以脱敏：PE 的 CodeView 记录仍可能包含 PDB 的本机绝对路径，须在链接／分发准备阶段处理并重新检查 EXE／DLL。

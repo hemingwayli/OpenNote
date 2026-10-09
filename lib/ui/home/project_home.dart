@@ -385,7 +385,7 @@ class _ProjectHomeState extends State<ProjectHome> {
                     ? showAboutDialog(
                         context: context,
                         applicationName: 'OpenNote',
-                        applicationVersion: '0.1.0',
+                        applicationVersion: '0.1.2',
                         children: [const Text('离线文档阅读与知识整理')],
                       )
                     : _run(() => widget.onLibraryAction(value)),
@@ -453,10 +453,15 @@ class _ProjectHomeState extends State<ProjectHome> {
     final recent = stamp == null
         ? '尚未开始阅读'
         : '最近打开 ${stamp.month}月${stamp.day}日';
+    final details =
+        '${item.documentCount} 文档  ·  ${item.mapCount} 脑图  ·  ${item.cardCount} 卡片';
+    final caption = _query.isNotEmpty
+        ? '${item.folderTitle ?? '未分类'} · $recent'
+        : recent;
     return Material(
-      color: Colors.white,
-      elevation: _hoveredProject == item.project.id ? 1 : 0,
-      shadowColor: const Color(0x10262b33),
+      color: _hoveredProject == item.project.id
+          ? const Color(0xfff7f8f9)
+          : Colors.transparent,
       animationDuration: const Duration(milliseconds: 140),
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
@@ -464,7 +469,7 @@ class _ProjectHomeState extends State<ProjectHome> {
         side: BorderSide(
           color: _focusedProject == item.project.id
               ? OpenNoteTokens.accent
-              : OpenNoteTokens.border,
+              : Colors.transparent,
           width: _focusedProject == item.project.id ? 2 : 1,
         ),
       ),
@@ -484,33 +489,59 @@ class _ProjectHomeState extends State<ProjectHome> {
               : () => _run(() => widget.onOpenProject(item.project.id)),
           focusColor: OpenNoteTokens.selected,
           hoverColor: const Color(0x04292c30),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: ProjectCover(
-                  cache: widget.covers,
-                  path: loadCover ? item.coverPath : null,
-                  hash: loadCover ? item.coverHash : null,
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(
+                  height: 232,
+                  child: ProjectCover(
+                    cache: widget.covers,
+                    path: loadCover ? item.coverPath : null,
+                    hash: loadCover ? item.coverHash : null,
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 8, 4),
-                child: Row(
+                const SizedBox(height: 16),
+                Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: Tooltip(
-                        message: item.project.title,
-                        child: Text(
-                          item.project.title,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            height: 1.5,
-                            fontWeight: FontWeight.w600,
-                          ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                          // 日期跟随实际标题高度，不为单行名称预留第二行。
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Tooltip(
+                              message: item.project.title,
+                              child: Text(
+                                item.project.title,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  height: 1.4,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Tooltip(
+                              message: '$caption\n$details',
+                              child: Text(
+                                caption,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  height: 1.4,
+                                  color: Color(0xff8a8e94),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -521,7 +552,11 @@ class _ProjectHomeState extends State<ProjectHome> {
                         tooltip: '管理项目 ${item.project.title}',
                         enabled: !_busy,
                         padding: EdgeInsets.zero,
-                        icon: const OpenNoteIcon(Icons.more_horiz, size: 18),
+                        icon: const OpenNoteIcon(
+                          Icons.more_horiz,
+                          size: 18,
+                          color: OpenNoteTokens.secondary,
+                        ),
                         onSelected: (value) => _projectAction(value, item),
                         itemBuilder: (_) => const [
                           PopupMenuItem(value: 'rename', child: Text('重命名')),
@@ -532,28 +567,8 @@ class _ProjectHomeState extends State<ProjectHome> {
                     ),
                   ],
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  _query.isNotEmpty
-                      ? '${item.folderTitle ?? '未分类'} · $recent'
-                      : recent,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                child: Text(
-                  '${item.documentCount} 文档  ·  ${item.mapCount} 脑图  ·  ${item.cardCount} 卡片',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -631,17 +646,32 @@ class _ProjectHomeState extends State<ProjectHome> {
                                       icon: const OpenNoteIcon(Icons.menu),
                                     ),
                                   Expanded(
-                                    child: Text(
-                                      '项目',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .headlineMedium
-                                          ?.copyWith(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.w600,
+                                    child: Row(
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                            '项目',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headlineMedium
+                                                ?.copyWith(
+                                                  fontSize: 24,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
                                           ),
+                                        ),
+                                        if (constraints.maxWidth >= 1000) ...[
+                                          const SizedBox(width: 16),
+                                          Text(
+                                            '$_total 个项目',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall,
+                                          ),
+                                        ],
+                                      ],
                                     ),
                                   ),
                                   SizedBox(
@@ -738,7 +768,9 @@ class _ProjectHomeState extends State<ProjectHome> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 12),
+                              const Divider(height: 1, thickness: 1),
+                              const SizedBox(height: 24),
                               if (_error != null)
                                 Row(
                                   children: [
@@ -799,14 +831,38 @@ class _ProjectHomeState extends State<ProjectHome> {
                                               MediaQuery.textScalerOf(context)
                                                   .scale(16) /
                                               16;
+                                          // 固定书格宽度，空位留白；窗口增宽只增加列数。
+                                          final cardWidth = math.min(
+                                            200.0,
+                                            box.maxWidth,
+                                          );
+                                          const gap = 64.0;
+                                          const rowGap = 48.0;
                                           final columns = math.max(
                                             1,
-                                            ((box.maxWidth + 20) /
-                                                    (300 * scale))
+                                            ((box.maxWidth + gap) /
+                                                    (cardWidth + gap))
                                                 .floor(),
                                           );
                                           final height =
-                                              324 + (scale - 1) * 140;
+                                              232.0 +
+                                              16.0 +
+                                              math.max(
+                                                36.0,
+                                                4.0 +
+                                                    (44.8 * scale)
+                                                        .ceilToDouble() +
+                                                    4.0 +
+                                                    (15.4 * scale)
+                                                        .ceilToDouble(),
+                                              ) +
+                                              24.0;
+                                          final trailingSpace = math.max(
+                                            0.0,
+                                            box.maxWidth -
+                                                columns * cardWidth -
+                                                (columns - 1) * gap,
+                                          );
                                           return CustomScrollView(
                                             key: const Key(
                                               'project-grid-scroll',
@@ -814,12 +870,13 @@ class _ProjectHomeState extends State<ProjectHome> {
                                             controller: _scroll,
                                             scrollCacheExtent:
                                                 ScrollCacheExtent.pixels(
-                                                  height + 20,
+                                                  height + rowGap,
                                                 ),
                                             slivers: [
                                               SliverLayoutBuilder(
                                                 builder: (context, viewport) {
-                                                  final rowHeight = height + 20;
+                                                  final rowHeight =
+                                                      height + rowGap;
                                                   final firstRow =
                                                       (viewport.scrollOffset /
                                                               rowHeight)
@@ -830,34 +887,40 @@ class _ProjectHomeState extends State<ProjectHome> {
                                                                       .remainingPaintExtent) /
                                                               rowHeight)
                                                           .ceil();
-                                                  return SliverGrid(
-                                                    gridDelegate:
-                                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                                          crossAxisCount:
-                                                              columns,
-                                                          mainAxisExtent:
-                                                              height,
-                                                          crossAxisSpacing: 20,
-                                                          mainAxisSpacing: 20,
-                                                        ),
-                                                    delegate:
-                                                        SliverChildBuilderDelegate(
-                                                          (
-                                                            context,
-                                                            index,
-                                                          ) => _card(
-                                                            _items[index],
-                                                            loadCover:
-                                                                index ~/
-                                                                        columns >=
-                                                                    firstRow &&
-                                                                index ~/
-                                                                        columns <=
-                                                                    lastRow,
+                                                  return SliverPadding(
+                                                    padding: EdgeInsets.only(
+                                                      right: trailingSpace,
+                                                    ),
+                                                    sliver: SliverGrid(
+                                                      gridDelegate:
+                                                          SliverGridDelegateWithFixedCrossAxisCount(
+                                                            crossAxisCount:
+                                                                columns,
+                                                            mainAxisExtent:
+                                                                height,
+                                                            crossAxisSpacing:
+                                                                gap,
+                                                            mainAxisSpacing:
+                                                                rowGap,
                                                           ),
-                                                          childCount:
-                                                              _items.length,
+                                                      delegate: SliverChildBuilderDelegate(
+                                                        (
+                                                          context,
+                                                          index,
+                                                        ) => _card(
+                                                          _items[index],
+                                                          loadCover:
+                                                              index ~/
+                                                                      columns >=
+                                                                  firstRow &&
+                                                              index ~/
+                                                                      columns <=
+                                                                  lastRow,
                                                         ),
+                                                        childCount:
+                                                            _items.length,
+                                                      ),
+                                                    ),
                                                   );
                                                 },
                                               ),

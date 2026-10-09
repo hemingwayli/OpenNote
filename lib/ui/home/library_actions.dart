@@ -96,7 +96,7 @@ class LibraryActions {
   Future<void> licenses() async => showLicensePage(
     context: context,
     applicationName: 'OpenNote',
-    applicationVersion: '0.1.0',
+    applicationVersion: '0.1.2',
     applicationLegalese: 'OpenNote contributors · Apache License 2.0',
   );
 

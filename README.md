@@ -16,7 +16,7 @@ OpenNote is an offline PDF/EPUB reading and knowledge workspace for Windows, lic
 - 从卡片返回原文：PDF 使用页码和页面坐标，EPUB 使用章节与 CFI。
 - 中英文印刷扫描页离线 OCR、全文搜索，以及包含原文、附件和笔记的完整备份恢复。
 
-当前版本为 **0.1.0**，主要支持 **Windows 11 x64**、鼠标与键盘。功能边界见[维护基线](docs/implementation-v0.1.0.md)。
+当前版本为 **0.1.2**，主要支持 **Windows 11 x64**、鼠标与键盘。功能边界见[维护基线](docs/implementation-v0.1.0.md)。
 
 ## 安装与快速开始
 
@@ -24,11 +24,11 @@ OpenNote is an offline PDF/EPUB reading and knowledge workspace for Windows, lic
 
 | 文件 | 用途 |
 | --- | --- |
-| [OpenNote-0.1.0-Windows-x64-Setup.exe](https://github.com/hemingwayli/OpenNote/releases/download/v0.1.0/OpenNote-0.1.0-Windows-x64-Setup.exe) | 推荐：安装后使用，支持卸载 |
-| [OpenNote-0.1.0-Windows-x64.zip](https://github.com/hemingwayli/OpenNote/releases/download/v0.1.0/OpenNote-0.1.0-Windows-x64.zip) | 便携版：完整解压后运行 `OpenNote/opennote.exe` |
-| [OpenNote-0.1.0-Source.zip](https://github.com/hemingwayli/OpenNote/releases/download/v0.1.0/OpenNote-0.1.0-Source.zip) | 源码归档，供开发者使用 |
+| [OpenNote-0.1.2-Windows-x64-Setup.exe](https://github.com/hemingwayli/OpenNote/releases/download/v0.1.2/OpenNote-0.1.2-Windows-x64-Setup.exe) | 推荐：安装后使用，支持卸载 |
+| [OpenNote-0.1.2-Windows-x64.zip](https://github.com/hemingwayli/OpenNote/releases/download/v0.1.2/OpenNote-0.1.2-Windows-x64.zip) | 便携版：完整解压后运行 `OpenNote/opennote.exe` |
+| [OpenNote-0.1.2-Source.zip](https://github.com/hemingwayli/OpenNote/releases/download/v0.1.2/OpenNote-0.1.2-Source.zip) | 源码归档，供开发者使用 |
 
-当前公开版本为 [v0.1.0](https://github.com/hemingwayli/OpenNote/releases/tag/v0.1.0)。安装包与便携包均可直接使用；文件大小和 SHA-256 见 [分发清单](https://github.com/hemingwayli/OpenNote/releases/download/v0.1.0/release-manifest.json)与 [SHA256SUMS](https://github.com/hemingwayli/OpenNote/releases/download/v0.1.0/SHA256SUMS.txt)。
+当前公开版本为 [v0.1.2](https://github.com/hemingwayli/OpenNote/releases/tag/v0.1.2)。安装包与便携包均可直接使用；文件大小和 SHA-256 见 [分发清单](https://github.com/hemingwayli/OpenNote/releases/download/v0.1.2/release-manifest.json)与 [SHA256SUMS](https://github.com/hemingwayli/OpenNote/releases/download/v0.1.2/SHA256SUMS.txt)。
 
 完整安装包或便携包包含应用和离线 OCR 依赖。便携包须完整解压后运行 `OpenNote/opennote.exe`，不能只复制 EXE。EPUB 阅读还需要系统 **Microsoft Edge WebView2 Runtime**；缺少时 PDF 阅读仍可使用。
 

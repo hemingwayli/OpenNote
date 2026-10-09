@@ -3002,7 +3002,7 @@ class _WorkbenchState extends State<Workbench> {
   Future<void> _about() async => showAboutDialog(
     context: context,
     applicationName: 'OpenNote',
-    applicationVersion: '0.1.0',
+    applicationVersion: '0.1.2',
     children: [const Text('离线文档阅读与知识整理')],
   );
 

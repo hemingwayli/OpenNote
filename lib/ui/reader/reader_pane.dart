@@ -28,6 +28,7 @@ import 'package:pdfrx/pdfrx.dart';
 import '../../domain/models.dart' as model;
 import '../../engines/pdf/pdf_read_engine.dart';
 import '../../engines/pdf/pdf_text_selection.dart';
+import '../../engines/pdf/pdf_excerpt_text.dart';
 import 'reader_contract.dart';
 import '../theme/open_note_feedback.dart';
 import 'reader_scroll_behavior.dart';
@@ -172,6 +173,8 @@ class _ReaderPaneState extends State<ReaderPane>
   bool _busy = false;
   bool _initialPageReadySent = false;
   bool _navigationReady = false;
+  int _outlineNavigationRequest = 0;
+  ({int pageNumber, Matrix4 matrix})? _outlineViewport;
   bool _indexingRequested = false;
   int? _prioritizedPage;
   String? _error;
@@ -267,6 +270,7 @@ class _ReaderPaneState extends State<ReaderPane>
     _emptyNativePages.clear();
     _geometry = [];
     _outline = [];
+    _outlineViewport = null;
     _collapsedOutline.clear();
     _selection = [];
     _pendingSelectionPages = [];
@@ -424,7 +428,10 @@ class _ReaderPaneState extends State<ReaderPane>
       if (!mounted || generation != _generation) return;
       _geometry = geometry;
       widget.onGeometryLoaded?.call(geometry);
-      final outline = await document.loadOutline();
+      final outline = await PdfReadEngine.loadOutline(
+        document,
+        filePath: widget.filePath,
+      );
       if (!mounted || generation != _generation) return;
       setState(() {
         _outline = outline;
@@ -670,6 +677,7 @@ class _ReaderPaneState extends State<ReaderPane>
       return;
     }
     if (consumePending) widget.controller?.pendingPageIndex = null;
+    _outlineViewport = null;
     await _viewer.goToPage(
       pageNumber: pageIndex.clamp(0, _viewer.pageCount - 1) + 1,
       duration: Duration.zero,
@@ -695,6 +703,7 @@ class _ReaderPaneState extends State<ReaderPane>
       return;
     }
     controller?.acceptSource(request);
+    _outlineViewport = null;
     _sourceHold?.cancel();
     _sourceFade.stop();
     _sourceFade.value = 0;
@@ -769,6 +778,21 @@ class _ReaderPaneState extends State<ReaderPane>
 
   void _positionChanged() {
     if (!mounted || widget.closing) return;
+    if (_outlineViewport != null && _viewer.value != _outlineViewport!.matrix) {
+      if (_viewportSizing.isApplying) {
+        // 自动适配仍属于同一次阅读定位，避免整页模式同时显示多页时页码抖动。
+        _outlineViewport = (
+          pageNumber: _outlineViewport!.pageNumber,
+          matrix: _viewer.value.clone(),
+        );
+      } else {
+        _outlineViewport = null;
+        // 用户滚动、缩放或其他导航后恢复阅读器原有的自动页码判断。
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && !widget.closing) setState(() {});
+        });
+      }
+    }
     _refreshHoverCursor();
     _prioritizeReadingPage();
     if (_viewer.isReady && _geometry.isNotEmpty) {
@@ -1479,7 +1503,12 @@ class _ReaderPaneState extends State<ReaderPane>
         )
         .toList();
     return SelectedExcerpt(
-      text: anchors.map((a) => a.context).join('\n'),
+      text: formatPdfExcerptText(
+        anchors: anchors,
+        layerForPage: _layer,
+        geometryForPage: (index) =>
+            index >= 0 && index < _geometry.length ? _geometry[index] : null,
+      ),
       anchors: List.unmodifiable(anchors),
     );
   }
@@ -2012,6 +2041,7 @@ class _ReaderPaneState extends State<ReaderPane>
 
   Future<void> _handlePdfLink(PdfLink link) async {
     if (!_viewer.isReady) return;
+    _outlineViewport = null;
     final generation = _generation;
     final destination = link.dest;
     if (destination == null) {
@@ -2533,6 +2563,16 @@ class _ReaderPaneState extends State<ReaderPane>
                                                 onKey: _readerKey,
                                                 sizeDelegateProvider:
                                                     _viewportSizing,
+                                                calculateCurrentPageNumber:
+                                                    _outlineViewport == null
+                                                    ? null
+                                                    : (_, _, viewer) =>
+                                                          viewer.value ==
+                                                              _outlineViewport
+                                                                  ?.matrix
+                                                          ? _outlineViewport
+                                                                ?.pageNumber
+                                                          : null,
                                                 onSecondaryTapUp: (details) =>
                                                     _selectionMenu(
                                                       details.globalPosition,
@@ -2899,6 +2939,139 @@ class _ReaderPaneState extends State<ReaderPane>
     }
   }
 
+  Future<void> _navigateOutline(PdfDest? destination) async {
+    final request = ++_outlineNavigationRequest;
+    final generation = _generation;
+    if (widget.closing || !_viewer.isReady || !_navigationReady) return;
+    final target = _resolveOutlineTarget(destination);
+    if (target == null) {
+      setState(() => _feedback('此章节没有有效的跳转目标', _ReaderFeedbackKind.error));
+      return;
+    }
+    bool current() =>
+        mounted &&
+        !widget.closing &&
+        _viewer.isReady &&
+        _navigationReady &&
+        generation == _generation &&
+        request == _outlineNavigationRequest;
+    try {
+      if (_sidebarAsDrawer && _sidebarVisible) {
+        _closeSidebarDrawer();
+        // 抽屉关闭后的布局决定最终视口，旧请求不能覆盖后一次点击。
+        await WidgetsBinding.instance.endOfFrame;
+      }
+      if (!current()) return;
+      final moved = _viewportSizing.goToOutline(
+        pageNumber: target.pageNumber,
+        documentX: target.documentX,
+        documentY: target.documentY,
+      );
+      if (moved) {
+        // 页尾标题可能使相邻页占比更大；视口未移动时仍显示书签目标页。
+        _outlineViewport = (
+          pageNumber: target.pageNumber,
+          matrix: _viewer.value.clone(),
+        );
+        _viewer.setCurrentPageNumber(target.pageNumber);
+        _positionChanged();
+      }
+      setState(
+        () => _feedback(moved ? null : '无法跳转到该章节', _ReaderFeedbackKind.error),
+      );
+    } catch (error) {
+      if (current()) {
+        setState(() => _feedback('章节跳转失败：$error', _ReaderFeedbackKind.error));
+      }
+    }
+  }
+
+  ({int pageNumber, double? documentX, double? documentY})?
+  _resolveOutlineTarget(PdfDest? destination) {
+    if (destination == null ||
+        destination.pageNumber < 1 ||
+        destination.pageNumber > _geometry.length ||
+        destination.pageNumber > _viewer.pageCount) {
+      return null;
+    }
+    final index = destination.pageNumber - 1;
+    final page = _viewer.pages[index];
+    final pageRect = _viewer.layout.pageLayouts[index];
+    final adapter = PdfCoordinateAdapter(_geometry[index]);
+    final box = adapter.effectiveBox;
+    final params = destination.params;
+    double? parameter(int index) =>
+        params != null &&
+            index < params.length &&
+            params[index]?.isFinite == true
+        ? params[index]
+        : null;
+    double? x;
+    double? y;
+    switch (destination.command) {
+      case PdfDestCommand.xyz:
+        if (params != null && params.length >= 2) {
+          x = parameter(0);
+          y = parameter(1);
+        }
+      case PdfDestCommand.fitH:
+      case PdfDestCommand.fitBH:
+        y = parameter(0);
+      case PdfDestCommand.fitV:
+      case PdfDestCommand.fitBV:
+        x = parameter(0);
+      case PdfDestCommand.fitR:
+        final left = parameter(0);
+        final bottom = parameter(1);
+        final right = parameter(2);
+        final top = parameter(3);
+        if (left != null &&
+            bottom != null &&
+            right != null &&
+            top != null &&
+            left <= right &&
+            bottom <= top) {
+          final region = adapter
+              .quadInDocument(
+                model.PdfQuad.rect(
+                  left.clamp(box.left, box.right),
+                  bottom.clamp(box.top, box.bottom),
+                  right.clamp(box.left, box.right),
+                  top.clamp(box.top, box.bottom),
+                ),
+                page,
+                pageRect,
+              )
+              .getBounds();
+          return (
+            pageNumber: destination.pageNumber,
+            documentX: region.left,
+            documentY: region.top,
+          );
+        }
+      default:
+        break;
+    }
+    if (x == null && y == null) {
+      return (
+        pageNumber: destination.pageNumber,
+        documentX: null,
+        documentY: null,
+      );
+    }
+    final point = PdfPoint(
+      (x ?? box.left).clamp(box.left, box.right) - box.left,
+      (y ?? box.bottom).clamp(box.top, box.bottom) - box.top,
+    ).toOffsetInDocument(page: page, pageRect: pageRect);
+    final rotated =
+        _geometry[index].rotation == 90 || _geometry[index].rotation == 270;
+    return (
+      pageNumber: destination.pageNumber,
+      documentX: (rotated ? y : x) == null ? null : point.dx,
+      documentY: (rotated ? x : y) == null ? null : point.dy,
+    );
+  }
+
   Widget _toolButton(_ReaderTool tool, IconData icon, String label) {
     return Semantics(
       selected: _tool == tool,
@@ -2931,6 +3104,7 @@ class _ReaderPaneState extends State<ReaderPane>
   });
 
   Widget _sidebar() {
+    final collapsible = _collapsibleOutlineNodes(_outline).toList();
     return Material(
       color: Colors.white,
       shape: const Border(right: BorderSide(color: OpenNoteTokens.border)),
@@ -2945,6 +3119,7 @@ class _ReaderPaneState extends State<ReaderPane>
                     value: _sidebarTab == 1,
                     labels: const ['目录', '缩略图'],
                     expand: true,
+                    horizontalPadding: 4,
                     onChanged: (value) =>
                         setState(() => _sidebarTab = value ? 1 : 0),
                   ),
@@ -2954,6 +3129,14 @@ class _ReaderPaneState extends State<ReaderPane>
                     tooltip: '关闭目录',
                     onPressed: _closeSidebarDrawer,
                     icon: const OpenNoteIcon(Icons.close, size: 16),
+                    constraints: const BoxConstraints.tightFor(
+                      width: 36,
+                      height: 36,
+                    ),
+                    padding: EdgeInsets.zero,
+                    style: IconButton.styleFrom(
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
                   ),
               ],
             ),
@@ -3005,9 +3188,79 @@ class _ReaderPaneState extends State<ReaderPane>
                     ),
                   ),
           ),
+          // 批量操作固定在面板底部，目录列表单独滚动。
+          if (_sidebarTab == 0 && collapsible.isNotEmpty)
+            Padding(
+              key: const Key('reader-outline-actions'),
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  _outlineActionButton(
+                    key: const Key('reader-outline-expand-all'),
+                    tooltip: '展开全部',
+                    icon: Icons.unfold_more,
+                    onPressed: collapsible.any(_collapsedOutline.contains)
+                        ? () => setState(_collapsedOutline.clear)
+                        : null,
+                  ),
+                  const SizedBox(width: 4),
+                  _outlineActionButton(
+                    key: const Key('reader-outline-collapse-all'),
+                    tooltip: '折叠全部',
+                    icon: Icons.unfold_less,
+                    onPressed:
+                        collapsible.any(
+                          (node) => !_collapsedOutline.contains(node),
+                        )
+                        ? () => setState(
+                            () => _collapsedOutline.addAll(collapsible),
+                          )
+                        : null,
+                  ),
+                ],
+              ),
+            ),
         ],
       ),
     );
+  }
+
+  Widget _outlineActionButton({
+    required Key key,
+    required String tooltip,
+    required IconData icon,
+    required VoidCallback? onPressed,
+  }) => IconButton(
+    key: key,
+    tooltip: tooltip,
+    onPressed: onPressed,
+    constraints: const BoxConstraints.tightFor(width: 36, height: 36),
+    padding: EdgeInsets.zero,
+    style:
+        IconButton.styleFrom(
+          foregroundColor: OpenNoteTokens.secondary,
+          disabledForegroundColor: OpenNoteTokens.muted,
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+        ).copyWith(
+          overlayColor: WidgetStateProperty.resolveWith(
+            (states) => states.contains(WidgetState.focused)
+                ? OpenNoteTokens.selected
+                : OpenNoteTokens.hover,
+          ),
+        ),
+    icon: OpenNoteIcon(icon, size: 18),
+  );
+
+  Iterable<PdfOutlineNode> _collapsibleOutlineNodes(
+    List<PdfOutlineNode> nodes,
+  ) sync* {
+    for (final node in nodes) {
+      if (node.children.isEmpty) continue;
+      yield node;
+      yield* _collapsibleOutlineNodes(node.children);
+    }
   }
 
   List<Widget> _outlineWidgets(List<PdfOutlineNode> nodes, int depth) => [
@@ -3056,10 +3309,7 @@ class _ReaderPaneState extends State<ReaderPane>
             ),
           ),
         ),
-        onTap: () {
-          _closeSidebarDrawer();
-          unawaited(_viewer.goToDest(node.dest));
-        },
+        onTap: () => unawaited(_navigateOutline(node.dest)),
       ),
       if (!_collapsedOutline.contains(node))
         ..._outlineWidgets(node.children, depth + 1),

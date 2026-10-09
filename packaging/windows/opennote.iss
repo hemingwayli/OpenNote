@@ -4,7 +4,9 @@
 #ifndef OutputDir
   #define OutputDir "..\..\dist"
 #endif
-#define AppVersion "0.1.0"
+#ifndef AppVersion
+  #error AppVersion is required
+#endif
 #ifdef Candidate
   #define ProductId "OpenNote-EPUB-PDF-Candidate"
   #define ProductName "OpenNote EPUB／PDF 候选版"
@@ -28,7 +30,7 @@ MinVersion=10.0.22000
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 OutputDir={#OutputDir}
-OutputBaseFilename=OpenNote-0.1.0-Windows-x64-Setup
+OutputBaseFilename=OpenNote-{#AppVersion}-Windows-x64-Setup
 Compression=lzma2/fast
 SolidCompression=yes
 WizardStyle=modern

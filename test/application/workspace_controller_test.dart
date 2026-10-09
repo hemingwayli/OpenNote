@@ -4,6 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:opennote/application/workspace_controller.dart';
 import 'package:opennote/data/open_note_repository.dart';
 import 'package:opennote/domain/models.dart';
+import 'package:opennote/engines/pdf/pdf_excerpt_text.dart';
+import 'package:opennote/engines/pdf/pdf_text_selection.dart';
 import 'package:opennote/ui/reader/reader_contract.dart';
 import 'package:path/path.dart' as p;
 
@@ -441,6 +443,85 @@ void main() {
     expect(after.nodes.length, before.nodes.length);
     expect(after.cards.keys, before.cards.keys);
     expect(repository.undoEntryCount, history);
+  });
+
+  test('PDF摘录折行整理：正文和标题完整，旧卡片、来源、高亮与撤销保留', () async {
+    final document = await repository.importPdf(
+      projectId: project.id,
+      filePath: p.join(Directory.current.path, 'tools', 'fixtures', 'pdf', 'native.pdf'),
+      pageCount: 2,
+    );
+    final rows = [
+      '感到焦虑的人会反复疑虑和沉思。对即将发生的负',
+      '面事件的疑虑趋向被称为忧虑。焦虑也连带一些不适的生理反应。',
+      '这些感觉让人不安。',
+    ];
+    final raw = rows.join('\n');
+    final fragments = <TextFragment>[];
+    var offset = 0;
+    for (var index = 0; index < rows.length; index++) {
+      fragments.add(TextFragment(start: offset, length: rows[index].length,
+        quad: PdfQuad.rect(40, 680 - index * 20,
+            index == 2 ? 170 : 340, 692 - index * 20),
+        order: index, precision: GeometryPrecision.line,
+      ));
+      offset += rows[index].length + 1;
+    }
+    final savedLayer = await repository.saveTextLayer(TextLayerDraft(
+      revisionId: document.activeRevisionId, pageIndex: 0,
+      source: TextLayerSource.ocr, text: raw, fragments: fragments,
+      engineVersion: 'fixture',
+      parameters: const {'writingDirection': 'horizontalLtr'},
+    ), sessionId: repository.sessionId);
+    final layer = PdfSelectableText.fromPersisted(savedLayer);
+    final start = raw.indexOf('对即将'), end = raw.indexOf('忧虑。') + 3;
+    final anchors = selectTextAcrossPages(
+      revisionId: document.activeRevisionId,
+      a: PdfSelectionPoint(0, start, start + 1),
+      b: PdfSelectionPoint(0, end - 1, end), layerForPage: (_) => layer,
+    );
+    final original = anchors.single.context;
+    final old = await repository.createExcerpt(ExcerptDraft(
+      projectId: project.id, mapId: map.id, title: '旧摘录',
+      text: original, anchors: anchors,
+    ));
+    final text = formatPdfExcerptText(anchors: anchors, layerForPage: (_) => layer,
+      geometryForPage: (_) => PdfPageGeometry(pageIndex: 0,
+        cropBox: PdfQuad.rect(0, 0, 600, 800),
+        mediaBox: PdfQuad.rect(0, 0, 600, 800),
+      ),
+    );
+    expect(text, '对即将发生的负面事件的疑虑趋向被称为忧虑。');
+    await controller.refresh();
+    final excerpt = SelectedExcerpt(text: text, anchors: anchors);
+    await controller.addExcerpt(excerpt);
+    final buttonCardId = controller.selectedCardId!;
+    final dropped = await controller.addExcerptAt(excerpt, mapId: map.id,
+      position: const PdfPoint(600, 80), parentNodeId: null,
+    );
+    final snapshot = await repository.loadMap(map.id);
+    for (final id in [buttonCardId, dropped.card.id]) {
+      final card = snapshot.cards[id]!;
+      expect(card.body, text);
+      expect(card.excerptSnapshot, text);
+      expect(card.title, text);
+      final savedAnchor = (await repository.getAnchors(id)).single;
+      expect(savedAnchor.context, original);
+      expect(savedAnchor.textLayerId, savedLayer.id);
+      expect(savedAnchor.textStart, start);
+      expect(savedAnchor.textEnd, end);
+      expect(savedAnchor.quads.map((q) => q.toJson()),
+          anchors.single.quads.map((q) => q.toJson()));
+      expect((await repository.listAnnotations(document.activeRevisionId))
+          .where((a) => a.cardId == id), hasLength(1));
+    }
+    expect(snapshot.cards[old.card.id]!.body, original);
+    expect(snapshot.cards[old.card.id]!.title, '旧摘录');
+    expect((await repository.loadTextLayers(document.activeRevisionId)).single.text, raw);
+    await repository.undo();
+    expect((await repository.loadMap(map.id)).cards.containsKey(dropped.card.id), isFalse);
+    await repository.redo();
+    expect((await repository.loadMap(map.id)).cards[dropped.card.id]!.body, text);
   });
 
   test('PDF摘录沿用当前选中父与自由布局，原文锚点高亮和标题规则不变', () async {

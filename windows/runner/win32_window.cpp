@@ -3,6 +3,7 @@
 #include <dwmapi.h>
 #include <flutter_windows.h>
 #include <windowsx.h>
+#include <algorithm>
 #include <utility>
 
 #include "resource.h"
@@ -129,7 +130,8 @@ Win32Window::~Win32Window() {
 
 bool Win32Window::Create(const std::wstring& title,
                          const Point& origin,
-                         const Size& size) {
+                         const Size& size,
+                         bool center_in_work_area) {
   Destroy();
 
   const wchar_t* window_class =
@@ -137,14 +139,33 @@ bool Win32Window::Create(const std::wstring& title,
 
   const POINT target_point = {static_cast<LONG>(origin.x),
                               static_cast<LONG>(origin.y)};
-  HMONITOR monitor = MonitorFromPoint(target_point, MONITOR_DEFAULTTONEAREST);
+  HMONITOR monitor = center_in_work_area
+      ? MonitorFromWindow(nullptr, MONITOR_DEFAULTTOPRIMARY)
+      : MonitorFromPoint(target_point, MONITOR_DEFAULTTONEAREST);
   UINT dpi = FlutterDesktopGetDpiForMonitor(monitor);
   double scale_factor = dpi / 96.0;
+  int x = Scale(origin.x, scale_factor);
+  int y = Scale(origin.y, scale_factor);
+  int width = Scale(size.width, scale_factor);
+  int height = Scale(size.height, scale_factor);
+  if (center_in_work_area) {
+    MONITORINFO info = {sizeof(MONITORINFO)};
+    if (!GetMonitorInfo(monitor, &info)) return false;
+    const int work_width = info.rcWork.right - info.rcWork.left;
+    const int work_height = info.rcWork.bottom - info.rcWork.top;
+    const int margin = Scale(16, scale_factor);
+    // 优先保留边缘；小屏时保证窗口完整可见，并遵守可用的最小尺寸。
+    width = std::min(width, std::min(work_width,
+        std::max(Scale(1024, scale_factor), work_width - 2 * margin)));
+    height = std::min(height, std::min(work_height,
+        std::max(Scale(640, scale_factor), work_height - 2 * margin)));
+    x = info.rcWork.left + (work_width - width) / 2;
+    y = info.rcWork.top + (work_height - height) / 2;
+  }
 
   HWND window = CreateWindow(
       window_class, title.c_str(), WS_OVERLAPPEDWINDOW,
-      Scale(origin.x, scale_factor), Scale(origin.y, scale_factor),
-      Scale(size.width, scale_factor), Scale(size.height, scale_factor),
+      x, y, width, height,
       nullptr, nullptr, GetModuleHandle(nullptr), this);
 
   if (!window) {
@@ -438,10 +459,18 @@ Win32Window::MessageHandler(HWND hwnd,
       const UINT dpi = GetDpiForWindow(hwnd);
       limits->ptMinTrackSize.x = MulDiv(1024, dpi, 96);
       limits->ptMinTrackSize.y = MulDiv(640, dpi, 96);
+      MONITORINFO monitor = {sizeof(MONITORINFO)};
+      const bool has_monitor = GetMonitorInfo(
+          MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST), &monitor);
+      if (has_monitor) {
+        // 屏幕工作区小于常规最小尺寸时，仍允许完整显示启动窗口。
+        limits->ptMinTrackSize.x = std::min(limits->ptMinTrackSize.x,
+            monitor.rcWork.right - monitor.rcWork.left);
+        limits->ptMinTrackSize.y = std::min(limits->ptMinTrackSize.y,
+            monitor.rcWork.bottom - monitor.rcWork.top);
+      }
       if (chrome_enabled_) {
-        MONITORINFO monitor = {sizeof(MONITORINFO)};
-        if (GetMonitorInfo(MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST),
-                           &monitor)) {
+        if (has_monitor) {
           // 必须同时限制外框，只有客户区避让任务栏仍会被 Shell 当作全屏。
           limits->ptMaxPosition.x = monitor.rcWork.left - monitor.rcMonitor.left;
           limits->ptMaxPosition.y = monitor.rcWork.top - monitor.rcMonitor.top;

@@ -139,8 +139,9 @@ class _OpenNoteWindowBarState extends State<OpenNoteWindowBar>
         height: 56,
         child: Row(
           children: [
-            Expanded(child: widget.child),
-            const SizedBox(width: 12),
+            // 标题内容高度可能只有一行文字，拖动区域仍覆盖窗口栏完整高度。
+            Expanded(child: SizedBox.expand(child: widget.child)),
+            const OpenNoteWindowDrag(child: SizedBox(width: 12, height: 56)),
             _control('最小化', Icons.remove, 'minimize'),
             ValueListenableBuilder<bool>(
               valueListenable: WindowChrome.maximized,

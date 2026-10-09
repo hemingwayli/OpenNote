@@ -393,31 +393,48 @@ class _CardEditorState extends State<CardEditor> {
                   _thoughtBlock(_thoughts[i], i),
                   if (i < _thoughts.length - 1) const SizedBox(height: 12),
                 ],
-                const SizedBox(height: 24),
-                if (widget.card.excerptSnapshot.isNotEmpty)
-                  ExpansionTile(
-                    tilePadding: EdgeInsets.zero,
-                    title: const Tooltip(
-                      message: '只读来源',
-                      child: Text(
-                        '原文',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: OpenNoteTokens.secondary,
+                ValueListenableBuilder<TextEditingValue>(
+                  valueListenable: _body,
+                  builder: (context, value, _) {
+                    final original = widget.card.excerptSnapshot;
+                    // 按当前草稿精确比较；显隐不等待自动保存，也不改变原始摘录。
+                    if (original.isEmpty || value.text == original) {
+                      return const SizedBox.shrink();
+                    }
+                    return Column(
+                      key: const Key('card-original-section'),
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const SizedBox(height: 24),
+                        ExpansionTile(
+                          key: ValueKey('card-original-${widget.card.id}'),
+                          tilePadding: EdgeInsets.zero,
+                          title: const Tooltip(
+                            message: '只读来源',
+                            child: Text(
+                              '原文',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: OpenNoteTokens.secondary,
+                              ),
+                            ),
+                          ),
+                          children: [
+                            SelectableText(
+                              original,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                height: 1.6,
+                                color: OpenNoteTokens.secondary,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ),
-                    children: [
-                      SelectableText(
-                        widget.card.excerptSnapshot,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          height: 1.6,
-                          color: OpenNoteTokens.secondary,
-                        ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    );
+                  },
+                ),
               ],
             ),
           ),

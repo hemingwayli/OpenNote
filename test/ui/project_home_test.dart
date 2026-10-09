@@ -337,6 +337,83 @@ void main() {
     }
   });
 
+  testWidgets('首页封面陈列：宽屏不拉伸书格，窄屏和放大文字可换行且菜单可用', (tester) async {
+    final projects = <StudyProject>[];
+    for (final title in [
+      '系统与方法',
+      '阅读中的思考',
+      '很长的项目名称用于检查窄书格中的换行和完整名称提示',
+      '新的阅读计划',
+    ]) {
+      projects.add(await actions.real(tester, () => repo.createProject(title)));
+    }
+    await mount(tester, width: 1920);
+    final first = find.byKey(Key('project-card-${projects.first.id}'));
+    final width = tester.getSize(first).width;
+    final row =
+        projects
+            .map(
+              (project) =>
+                  tester.getRect(find.byKey(Key('project-card-${project.id}'))),
+            )
+            .toList()
+          ..sort((a, b) => a.left.compareTo(b.left));
+    expect(row.map((rect) => rect.top).toSet(), hasLength(1));
+    Rect titleRect(StudyProject project) => tester.getRect(
+      find.descendant(
+        of: find.byKey(Key('project-card-${project.id}')),
+        matching: find.text(project.title),
+      ),
+    );
+    double captionGap(StudyProject project) =>
+        tester
+            .getRect(
+              find.descendant(
+                of: find.byKey(Key('project-card-${project.id}')),
+                matching: find.text('尚未开始阅读'),
+              ),
+            )
+            .top -
+        titleRect(project).bottom;
+    expect(
+      titleRect(projects[2]).height,
+      greaterThan(titleRect(projects[0]).height),
+    );
+    expect(captionGap(projects[0]), lessThan(10), reason: '单行标题下没有预留空行');
+    expect(
+      captionGap(projects[2]),
+      closeTo(captionGap(projects[0]), 0.1),
+      reason: '日期始终跟随标题，两行标题也使用相同间隔',
+    );
+    expect(row.last.right, lessThan(1920 - 200), reason: '少量项目保留右侧空位');
+    expect(row[1].left - row[0].right, greaterThan(40), reason: '项目间保留陈列间距');
+    await tester.binding.setSurfaceSize(const Size(1280, 800));
+    await actions.settleUi(tester);
+    expect(tester.getSize(first).width, closeTo(width, 0.1));
+    tester.platformDispatcher.textScaleFactorTestValue = 1.5;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await tester.binding.setSurfaceSize(const Size(640, 800));
+    await actions.settleUi(tester);
+    final rows = projects
+        .map(
+          (project) =>
+              tester.getRect(find.byKey(Key('project-card-${project.id}'))).top,
+        )
+        .toSet();
+    expect(rows.length, greaterThan(1), reason: '窄窗口按固定书格换行');
+    expect(tester.takeException(), isNull);
+    final menu = find.byTooltip('管理项目 ${projects.first.title}');
+    await tester.ensureVisible(menu);
+    await actions.settleUi(tester);
+    await tester.tap(menu);
+    await actions.settleUi(tester);
+    expect(find.text('重命名'), findsOneWidget);
+    expect(find.text('移动到文件夹…'), findsOneWidget);
+    expect(find.text('移入回收站'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await unmount(tester);
+  });
+
   testWidgets('只有一个项目也先显示首页，草稿失败不离开，成功返回后可继续编辑', (tester) async {
     final project = await actions.real(
       tester,

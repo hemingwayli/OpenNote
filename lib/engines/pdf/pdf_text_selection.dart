@@ -8,14 +8,30 @@ class PdfSelectionPoint {
 }
 
 class PdfSelectableText {
-  const PdfSelectableText(this.id, this.text, this.fragments);
+  const PdfSelectableText(
+    this.id,
+    this.text,
+    this.fragments, {
+    this.parameters = const {},
+  });
   factory PdfSelectableText.fromPersisted(PageTextLayer layer) =>
-      PdfSelectableText(layer.id, layer.text, layer.fragments);
+      PdfSelectableText(
+        layer.id,
+        layer.text,
+        layer.fragments,
+        parameters: layer.parameters,
+      );
   factory PdfSelectableText.fromDraft(TextLayerDraft layer) =>
-      PdfSelectableText(null, layer.text, layer.fragments);
+      PdfSelectableText(
+        null,
+        layer.text,
+        layer.fragments,
+        parameters: layer.parameters,
+      );
   final String? id;
   final String text;
   final List<TextFragment> fragments;
+  final Map<String, Object?> parameters;
 }
 
 /// 原生/OCR 都走同一选区路径；每页分别绑定文本层版本与 UTF-16 范围。

@@ -23,6 +23,9 @@ import '../workspace/workbench_test.dart' as actions;
 // 局部编辑器改版只更新对应三张基线；普通运行仍比较全部状态。
 final _editorGoldenOnly =
     Platform.environment['OPENNOTE_EDITOR_GOLDENS_ONLY'] == '1';
+// 首页视觉改版只更新首页三种状态，避免启动无关工作台回归。
+final _homeGoldenOnly =
+    Platform.environment['OPENNOTE_HOME_GOLDENS_ONLY'] == '1';
 
 /// 基线只来自真实工作台与原生 PDF；资料库每次重新创建。
 void main() {
@@ -325,6 +328,7 @@ void main() {
         FocusManager.instance.primaryFocus?.unfocus();
         await actions.settleUi(tester);
         await _capture(tester, boundaryKey, 'home-search-$label.png');
+        if (_homeGoldenOnly) return;
         await actions.openHomeProject(tester, project.id);
         await actions.until(tester, () async => actions.readerReady(tester));
         await actions.idle(tester);
@@ -448,6 +452,7 @@ Future<void> _unmount(WidgetTester tester) async {
 
 Future<void> _capture(WidgetTester tester, GlobalKey key, String name) async {
   if (_editorGoldenOnly && !name.startsWith('editor-')) return;
+  if (_homeGoldenOnly && !name.startsWith('home-')) return;
   expect(tester.takeException(), isNull, reason: '截图前不得存在布局或运行异常');
   expect(
     MediaQuery.sizeOf(tester.element(find.byType(Scaffold).first)),

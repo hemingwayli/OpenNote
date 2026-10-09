@@ -13,15 +13,19 @@ import 'package:opennote/ui/theme/open_note_theme.dart';
 import 'package:opennote/ui/workspace/card_editor.dart';
 
 NoteCard cardWith({
+  String id = 'card',
+  String title = '在工作中练习正念',
+  String excerptSnapshot = '以正确的精神、持守正念，工作可以是令人愉悦的。',
+  String body = '我们需要确保自己享受工作。\n觉知自己的目标，也觉知身边的人。',
   String note = '',
   List<PersonalThought>? thoughts,
   String color = '#F7D976',
 }) => NoteCard(
-  id: 'card',
+  id: id,
   projectId: 'project',
-  title: '在工作中练习正念',
-  excerptSnapshot: '以正确的精神、持守正念，工作可以是令人愉悦的。',
-  body: '我们需要确保自己享受工作。\n觉知自己的目标，也觉知身边的人。',
+  title: title,
+  excerptSnapshot: excerptSnapshot,
+  body: body,
   note: note,
   thoughtEntries: thoughts,
   color: color,
@@ -71,6 +75,8 @@ void main() {
     Size size = const Size(360, 900),
     GlobalKey? boundary,
     Future<void> Function(String)? onColorChanged,
+    Future<bool>? sourceAvailable,
+    VoidCallback? onBackToSource,
   }) async {
     await tester.binding.setSurfaceSize(size);
     addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -82,13 +88,14 @@ void main() {
           theme: openNoteTheme(),
           home: Scaffold(
             body: CardEditor(
-              key: const ValueKey('editor'),
+              key: ValueKey(card.id),
               card: card,
               controller: controller,
               onSave: onSave,
               imagePath: null,
               onSaveState: (_) {},
-              onBackToSource: () {},
+              sourceAvailable: sourceAvailable,
+              onBackToSource: onBackToSource ?? () {},
               onClose: () {},
               onColorChanged: onColorChanged,
             ),
@@ -98,6 +105,363 @@ void main() {
     );
     await tester.pump();
   }
+
+  Future<void> controlKey(
+    WidgetTester tester,
+    LogicalKeyboardKey key, {
+    bool shift = false,
+  }) async {
+    await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+    if (shift) await tester.sendKeyDownEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyEvent(key);
+    if (shift) await tester.sendKeyUpEvent(LogicalKeyboardKey.shiftLeft);
+    await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+    await tester.pump();
+  }
+
+  const original = '工作可以是令人愉悦的。';
+  final bodyField = find.byKey(const Key('card-body'));
+  final originalSection = find.byKey(const Key('card-original-section'));
+
+  testWidgets('原文入口：按完整文本判断，其他字段与回源按钮独立', (tester) async {
+    final controller = CardEditorController();
+    var backToSource = 0;
+    await mount(
+      tester,
+      cardWith(body: original, excerptSnapshot: original),
+      controller,
+      (_, _, _) async {},
+      sourceAvailable: Future.value(true),
+      onBackToSource: () => backToSource++,
+    );
+    expect(find.text('原文'), findsNothing);
+    expect(originalSection, findsNothing);
+    expect(find.byTooltip('回到原文'), findsOneWidget);
+    await tester.tap(find.byTooltip('回到原文'));
+    expect(backToSource, 1);
+    await tester.enterText(find.byKey(const Key('card-title')), '修改标题');
+    await tester.enterText(thoughtFields(), '自己的理解');
+    await tester.pump();
+    expect(originalSection, findsNothing);
+    await controller.flush();
+    await mount(
+      tester,
+      cardWith(
+        title: '修改标题',
+        body: original,
+        excerptSnapshot: original,
+        note: '自己的理解',
+        color: '#80B9EB',
+      ),
+      controller,
+      (_, _, _) async {},
+    );
+    expect(originalSection, findsNothing);
+    for (final text in ['修改正文', '$original ', '$original\n']) {
+      await mount(
+        tester,
+        cardWith(body: text, excerptSnapshot: original),
+        controller,
+        (_, _, _) async {},
+      );
+      expect(find.text('原文'), findsOneWidget);
+      expect(find.byType(SelectableText), findsNothing, reason: '已有差异默认收起');
+    }
+    await mount(
+      tester,
+      cardWith(body: '没有原始摘录的主题', excerptSnapshot: ''),
+      controller,
+      (_, _, _) async {},
+    );
+    expect(originalSection, findsNothing);
+    await tester.enterText(bodyField, '继续编辑主题');
+    await tester.pump();
+    expect(originalSection, findsNothing);
+    await controller.flush();
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('原文入口：当前草稿立即显隐，保留焦点选区与中文组合输入且无占位', (tester) async {
+    final controller = CardEditorController();
+    final saved = <String>[];
+    await mount(
+      tester,
+      cardWith(body: original, excerptSnapshot: original),
+      controller,
+      (_, body, _) async => saved.add(body),
+    );
+    await tester.showKeyboard(bodyField);
+    final field = tester.widget<TextField>(bodyField);
+    final thoughtTop = tester.getTopLeft(thoughtFields());
+    final value = TextEditingValue(
+      text: '$original修改',
+      selection: TextSelection.collapsed(offset: original.length + 2),
+      composing: TextRange(start: original.length, end: original.length + 2),
+    );
+    tester.testTextInput.updateEditingValue(value);
+    await tester.pump();
+    expect(originalSection, findsOneWidget);
+    expect(saved, isEmpty, reason: '入口显隐不等待 500 毫秒自动保存');
+    expect(
+      tester.widget<TextField>(bodyField).controller,
+      same(field.controller),
+    );
+    expect(field.focusNode!.hasFocus, isTrue);
+    expect(field.controller!.value, value);
+    expect(tester.getTopLeft(thoughtFields()), thoughtTop);
+    await tester.enterText(bodyField, original);
+    await tester.pump();
+    expect(originalSection, findsNothing);
+    expect(field.focusNode!.hasFocus, isTrue);
+    expect(field.controller!.selection.baseOffset, original.length);
+    final scroll = tester.widget<SingleChildScrollView>(
+      find.byType(SingleChildScrollView),
+    );
+    expect(
+      tester.getBottomLeft(find.byWidget(scroll.child!)).dy,
+      tester
+          .getBottomLeft(
+            find.byKey(const ValueKey('card-thought-row-card:thought')),
+          )
+          .dy,
+      reason: '隐藏后滚动内容在思考条目处结束，没有原文专属间距',
+    );
+    await controller.flush();
+    expect(saved, [original]);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('原文入口：粘贴剪切与文本撤销重做同步，原文只读且可复制', (tester) async {
+    String? clipboard;
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async {
+        if (call.method == 'Clipboard.setData') {
+          clipboard = (call.arguments as Map)['text'] as String?;
+        }
+        if (call.method == 'Clipboard.getData') return {'text': clipboard};
+        if (call.method == 'Clipboard.hasStrings') {
+          return {'value': clipboard?.isNotEmpty ?? false};
+        }
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+    final controller = CardEditorController();
+    await mount(
+      tester,
+      cardWith(body: original, excerptSnapshot: original),
+      controller,
+      (_, _, _) async {},
+    );
+    await tester.showKeyboard(bodyField);
+    await tester.pump(const Duration(milliseconds: 550));
+    await tester.enterText(bodyField, '$original修改');
+    await tester.pump(const Duration(milliseconds: 550));
+    expect(originalSection, findsOneWidget);
+    await controlKey(tester, LogicalKeyboardKey.keyZ);
+    expect(tester.widget<TextField>(bodyField).controller!.text, original);
+    expect(originalSection, findsNothing);
+    await controlKey(tester, LogicalKeyboardKey.keyZ, shift: true);
+    expect(originalSection, findsOneWidget);
+    final draft = tester.widget<TextField>(bodyField).controller!;
+    draft.selection = TextSelection(
+      baseOffset: original.length,
+      extentOffset: draft.text.length,
+    );
+    await controlKey(tester, LogicalKeyboardKey.keyX);
+    expect(clipboard, '修改');
+    expect(draft.text, original);
+    expect(originalSection, findsNothing);
+    await controlKey(tester, LogicalKeyboardKey.keyV);
+    await tester.pump();
+    expect(draft.text, '$original修改');
+    expect(originalSection, findsOneWidget);
+    await tester.tap(find.text('原文'));
+    await tester.pumpAndSettle();
+    final source = tester.widget<SelectableText>(find.byType(SelectableText));
+    expect(source.data, original);
+    final sourceField = tester.widget<EditableText>(
+      find.descendant(
+        of: find.byType(SelectableText),
+        matching: find.byType(EditableText),
+      ),
+    );
+    expect(sourceField.readOnly, isTrue);
+    sourceField.focusNode.requestFocus();
+    sourceField.controller.selection = TextSelection(
+      baseOffset: 0,
+      extentOffset: original.length,
+    );
+    await tester.pump();
+    await controlKey(tester, LogicalKeyboardKey.keyC);
+    expect(clipboard, original);
+    expect(draft.text, '$original修改');
+    await controller.flush();
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  }, variant: TargetPlatformVariant.only(TargetPlatform.windows));
+
+  testWidgets('原文入口：持续可见保留展开，隐藏重现切卡与重新打开均收起', (tester) async {
+    final controller = CardEditorController();
+    Future<void> save(String _, String _, List<PersonalThought> _) async {}
+    final card = cardWith(body: '修改正文', excerptSnapshot: original);
+    await mount(tester, card, controller, save);
+    await tester.tap(find.text('原文'));
+    await tester.pumpAndSettle();
+    expect(find.byType(SelectableText), findsOneWidget);
+    await tester.enterText(bodyField, '再次修改正文');
+    await tester.pump();
+    expect(
+      tester.widget<SelectableText>(find.byType(SelectableText)).data,
+      original,
+    );
+    await tester.enterText(bodyField, original);
+    await tester.pump();
+    expect(originalSection, findsNothing);
+    await tester.enterText(bodyField, '再次产生差异');
+    await tester.pump();
+    expect(originalSection, findsOneWidget);
+    expect(find.byType(SelectableText), findsNothing);
+    await tester.tap(find.text('原文'));
+    await tester.pumpAndSettle();
+    await controller.flush();
+    await mount(
+      tester,
+      cardWith(id: 'other-card', body: '另一张卡片', excerptSnapshot: '另一个摘录'),
+      controller,
+      save,
+    );
+    expect(find.byType(SelectableText), findsNothing);
+    await tester.tap(find.text('原文'));
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<SelectableText>(find.byType(SelectableText)).data,
+      '另一个摘录',
+    );
+    await tester.pumpWidget(const SizedBox.shrink());
+    await mount(tester, card, controller, save);
+    expect(originalSection, findsOneWidget);
+    expect(find.byType(SelectableText), findsNothing);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('原文入口：保存回读与外部撤销同步，排队和失败期间保留当前草稿', (tester) async {
+    final controller = CardEditorController();
+    final failure = Completer<void>();
+    var fail = false;
+    var saved = original;
+    Future<void> save(String _, String body, List<PersonalThought> _) async {
+      if (fail) await failure.future;
+      saved = body;
+    }
+
+    await mount(
+      tester,
+      cardWith(body: original, excerptSnapshot: original),
+      controller,
+      save,
+    );
+    await tester.enterText(bodyField, '已保存修改');
+    await controller.flush();
+    final draft = tester.widget<TextField>(bodyField).controller;
+    await mount(
+      tester,
+      cardWith(body: saved, excerptSnapshot: original),
+      controller,
+      save,
+    );
+    expect(originalSection, findsOneWidget);
+    expect(tester.widget<TextField>(bodyField).controller, same(draft));
+    await mount(
+      tester,
+      cardWith(body: original, excerptSnapshot: original),
+      controller,
+      save,
+    );
+    expect(originalSection, findsNothing, reason: '外部撤销同步回原始摘录');
+    await tester.enterText(bodyField, '失败后仍保留的草稿');
+    fail = true;
+    final failedSave = expectLater(controller.flush(), throwsStateError);
+    await tester.pump();
+    await mount(
+      tester,
+      cardWith(body: original, excerptSnapshot: original),
+      controller,
+      save,
+    );
+    expect(originalSection, findsOneWidget, reason: '保存期间的旧回读不能隐藏入口');
+    failure.completeError(StateError('模拟正文保存失败'));
+    await failedSave;
+    await mount(
+      tester,
+      cardWith(body: original, excerptSnapshot: original),
+      controller,
+      save,
+    );
+    expect(draft!.text, '失败后仍保留的草稿');
+    expect(originalSection, findsOneWidget);
+    fail = false;
+    await controller.flush();
+    expect(saved, '失败后仍保留的草稿');
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('原文入口：360宽隐藏收起展开三态截图无溢出', (tester) async {
+    final controller = CardEditorController();
+    final boundary = GlobalKey();
+    Future<void> capture(String name) async {
+      await tester.pumpAndSettle();
+      final render =
+          boundary.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+      await tester.runAsync(() async {
+        final image = await render.toImage(pixelRatio: 1);
+        try {
+          final png = (await image.toByteData(format: ui.ImageByteFormat.png))!;
+          final directory = await Directory(
+            '.local/verification/card-original-difference',
+          ).create(recursive: true);
+          await File('${directory.path}/editor-$name-360.png')
+              .writeAsBytes(png.buffer.asUint8List());
+        } finally {
+          image.dispose();
+        }
+      });
+      expect(tester.takeException(), isNull);
+    }
+
+    await mount(
+      tester,
+      cardWith(
+        body: original,
+        excerptSnapshot: original,
+        note: '保持专注，记录自己的理解。',
+      ),
+      controller,
+      (_, _, _) async {},
+      boundary: boundary,
+    );
+    expect(originalSection, findsNothing);
+    await capture('hidden');
+    await tester.enterText(bodyField, '把日常工作变成练习觉察的机会。');
+    expect(tester.widget<TextField>(bodyField).focusNode!.hasFocus, isTrue);
+    await capture('collapsed');
+    expect(find.text('原文').hitTestable(), findsOneWidget);
+    expect(find.byType(SelectableText), findsNothing);
+    await tester.tap(find.text('原文'));
+    await capture('expanded');
+    expect(find.byType(SelectableText).hitTestable(), findsOneWidget);
+    await controller.flush();
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
 
   testWidgets('个人思考：紧凑空草稿、多条添加编辑删除与自动保存', (tester) async {
     final controller = CardEditorController();

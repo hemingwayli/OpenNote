@@ -97,6 +97,40 @@ class PdfCoordinateAdapter {
 class PdfReadEngine {
   static const version = 'pdfrx-2.6.5/pdfium';
 
+  /// PDFium 的 GetView 会把空坐标变为 0；目录需要保留原始 null 语义。
+  static Future<List<PdfOutlineNode>> loadOutline(
+    PdfDocument document, {
+    required String filePath,
+  }) async {
+    final nodes = await document.loadOutline();
+    bool needsCoordinates(List<PdfOutlineNode> nodes) => nodes.any(
+      (node) =>
+          node.dest == null ||
+          (node.dest != null &&
+              node.dest!.command != PdfDestCommand.fit &&
+              node.dest!.command != PdfDestCommand.fitB) ||
+          needsCoordinates(node.children),
+    );
+    if (!needsCoordinates(nodes)) return nodes;
+    try {
+      return await Isolate.run(() => _readOutlineParameters(filePath, nodes));
+    } catch (error) {
+      // 位置元数据损坏不妨碍按有效页码阅读，也不执行未经确认的缩放。
+      debugPrint('PDF 目录位置解析失败，已改为页码定位：$error');
+      List<PdfOutlineNode> pagesOnly(List<PdfOutlineNode> nodes) => [
+        for (final node in nodes)
+          PdfOutlineNode(
+            title: node.title,
+            dest: node.dest == null
+                ? null
+                : PdfDest(node.dest!.pageNumber, PdfDestCommand.fit, null),
+            children: pagesOnly(node.children),
+          ),
+      ];
+      return pagesOnly(nodes);
+    }
+  }
+
   static Future<List<model.PdfPageGeometry>> loadGeometry(
     PdfDocument document, {
     required String filePath,
@@ -193,6 +227,178 @@ class PdfReadEngine {
     } finally {
       bitmap.dispose();
     }
+  }
+}
+
+Future<List<PdfOutlineNode>> _readOutlineParameters(
+  String filePath,
+  List<PdfOutlineNode> nativeNodes,
+) async {
+  final file = await File(filePath).open(mode: FileMode.read);
+  try {
+    final document = await structure.PDFParser(
+      structure.BufferedRandomAccessStream(structure_io.FileStream(file)),
+    ).parse();
+    final catalog = await document.catalog;
+    final resolver = catalog.resolver;
+    const first = structure.PDFName('First');
+    const next = structure.PDFName('Next');
+    const dest = structure.PDFName('Dest');
+    const d = structure.PDFName('D');
+    Map<structure.PDFObject, int>? sourcePages;
+    Future<int?> pageNumber(structure.PDFObject raw) async {
+      if (sourcePages == null) {
+        final indices = <structure.PDFObject, int>{};
+        final visited = <structure.PDFObject>{};
+        Future<void> visit(structure.PDFObject? page) async {
+          if (page == null || !visited.add(page)) return;
+          final dictionary = await resolver.resolve<structure.PDFDictionary>(
+            page,
+          );
+          final type = await resolver.resolve<structure.PDFName>(
+            dictionary?[const structure.PDFName('Type')],
+          );
+          if (type?.value == 'Page') {
+            indices[page] = indices.length + 1;
+          } else if (type?.value == 'Pages') {
+            final kids = await resolver.resolve<structure.PDFArray>(
+              dictionary?[const structure.PDFName('Kids')],
+            );
+            if (kids != null) {
+              for (final kid in kids) {
+                await visit(kid);
+              }
+            }
+          }
+        }
+
+        await visit(catalog.dictionary[const structure.PDFName('Pages')]);
+        sourcePages = indices;
+      }
+      return sourcePages![raw];
+    }
+
+    final namedVisited = <structure.PDFObject>{};
+    Future<structure.PDFObject?> findNamed(
+      structure.PDFObject? raw,
+      String name,
+    ) async {
+      if (raw == null || !namedVisited.add(raw) || namedVisited.length > 4096) {
+        return null;
+      }
+      final tree = await resolver.resolve<structure.PDFDictionary>(raw);
+      if (tree == null) return null;
+      final names = await resolver.resolve<structure.PDFArray>(
+        tree[const structure.PDFName('Names')],
+      );
+      if (names != null) {
+        for (var index = 0; index + 1 < names.length; index += 2) {
+          final key = await resolver.resolve<structure.PDFStringLike>(
+            names[index],
+          );
+          if (key?.asString() == name) return names[index + 1];
+        }
+      }
+      final kids = await resolver.resolve<structure.PDFArray>(
+        tree[const structure.PDFName('Kids')],
+      );
+      if (kids != null) {
+        for (final kid in kids) {
+          final found = await findNamed(kid, name);
+          if (found != null) return found;
+        }
+      }
+      return null;
+    }
+
+    Future<structure.PDFArray?> destinationArray(
+      structure.PDFObject? raw,
+    ) async {
+      var value = await resolver.resolve<structure.PDFObject>(raw);
+      if (value is structure.PDFName || value is structure.PDFStringLike) {
+        final name = value is structure.PDFName
+            ? value.value
+            : (value as structure.PDFStringLike).asString();
+        final oldNames = await resolver.resolve<structure.PDFDictionary>(
+          catalog.dictionary[const structure.PDFName('Dests')],
+        );
+        raw = oldNames?[structure.PDFName(name)];
+        if (raw == null) {
+          final names = await resolver.resolve<structure.PDFDictionary>(
+            catalog.dictionary[const structure.PDFName('Names')],
+          );
+          namedVisited.clear();
+          raw = await findNamed(names?[const structure.PDFName('Dests')], name);
+        }
+        value = await resolver.resolve<structure.PDFObject>(raw);
+      }
+      if (value is structure.PDFDictionary) {
+        value = await resolver.resolve<structure.PDFObject>(value[d]);
+      }
+      return value is structure.PDFArray ? value : null;
+    }
+
+    Future<List<PdfOutlineNode>> siblings(
+      structure.PDFObject? raw,
+      List<PdfOutlineNode> nodes,
+    ) async {
+      final output = <PdfOutlineNode>[];
+      for (final node in nodes) {
+        final dictionary = await resolver.resolve<structure.PDFDictionary>(raw);
+        final title = await resolver.resolve<structure.PDFStringLike>(
+          dictionary?[const structure.PDFName('Title')],
+        );
+        if (dictionary == null || title?.asString() != node.title) {
+          throw const FormatException('目录节点与原始书签不一致');
+        }
+        var destination = node.dest;
+        {
+          var rawDestination = dictionary[dest];
+          if (rawDestination == null) {
+            final action = await resolver.resolve<structure.PDFDictionary>(
+              dictionary[const structure.PDFName('A')],
+            );
+            rawDestination = action?[d];
+          }
+          final array = await destinationArray(rawDestination);
+          if (array != null && array.length >= 2) {
+            final targetPage =
+                destination?.pageNumber ?? await pageNumber(array[0]);
+            final command = await resolver.resolve<structure.PDFName>(array[1]);
+            final params = <double?>[];
+            for (final value in array.skip(2)) {
+              final number = await resolver.resolve<structure.PDFObject>(value);
+              params.add(
+                number is structure.PDFNumber ? number.toDouble() : null,
+              );
+            }
+            if (targetPage != null) {
+              destination = PdfDest(
+                targetPage,
+                PdfDestCommand.parse(command?.value ?? 'unknown'),
+                params,
+              );
+            }
+          }
+        }
+        output.add(
+          PdfOutlineNode(
+            title: node.title,
+            dest: destination,
+            children: await siblings(dictionary[first], node.children),
+          ),
+        );
+        raw = dictionary[next];
+      }
+      return output;
+    }
+
+    final outlines = await resolver.resolve<structure.PDFDictionary>(
+      catalog.dictionary[const structure.PDFName('Outlines')],
+    );
+    return await siblings(outlines?[first], nativeNodes);
+  } finally {
+    await file.close();
   }
 }
 

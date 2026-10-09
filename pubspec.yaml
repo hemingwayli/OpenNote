@@ -1,7 +1,7 @@
 name: opennote
 description: 离线 PDF／EPUB 阅读、摘录与脑图学习工作台。
 publish_to: none
-version: 0.1.0+1
+version: 0.1.2+3
 
 environment:
   sdk: '>=3.13.0 <4.0.0'

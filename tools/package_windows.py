@@ -5,6 +5,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -16,6 +17,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from toolchain import resolve_flutter_sdk
 RELEASE = ROOT / 'build' / 'windows' / 'x64' / 'runner' / 'Release'
 DIST = ROOT / 'dist'
+_version_match = re.search(r'^version:\s*(\d+\.\d+\.\d+)(?:\+\d+)?\s*$',
+                           (ROOT / 'pubspec.yaml').read_text(encoding='utf-8'), re.MULTILINE)
+if _version_match is None:
+    raise RuntimeError('pubspec.yaml 缺少有效的项目版本号')
+VERSION = _version_match.group(1)
 
 
 def digest(path: Path) -> str:
@@ -59,7 +65,7 @@ def write_source_archive() -> None:
                 raise RuntimeError(f'未经来源声明或字节已改变的文档不得进入源码包: {relative}')
         source_entries.append((source, f'OpenNote/{relative}'))
 
-    target = DIST / 'OpenNote-0.1.0-Source.zip'
+    target = DIST / f'OpenNote-{VERSION}-Source.zip'
     temporary = DIST / f'.{target.name}.{uuid.uuid4().hex}.tmp'
     created = False
     try:
@@ -77,7 +83,7 @@ def write_source_archive() -> None:
 
 def artifact_inventory() -> list[dict]:
     return [{'path': path.name, 'size': path.stat().st_size, 'sha256': digest(path)}
-            for path in sorted(DIST.glob('OpenNote-0.1.0-*')) if path.is_file()]
+            for path in sorted(DIST.glob(f'OpenNote-{VERSION}-*')) if path.is_file()]
 
 
 def collect_licenses() -> None:
@@ -159,6 +165,8 @@ def main() -> None:
     if args.source_only:
         manifest_path = DIST / 'release-manifest.json'
         metadata = json.loads(manifest_path.read_text(encoding='utf-8'))
+        if metadata['version'] != VERSION:
+            raise RuntimeError('源码版本与已有安装包不同；必须重新构建打包')
         write_source_archive()
         metadata['artifacts'] = artifact_inventory()
         manifest_path.write_text(json.dumps(metadata, indent=2) + '\n', encoding='utf-8')
@@ -173,7 +181,7 @@ def main() -> None:
             raise RuntimeError('候选构建身份与当前产物不一致；先运行 tools/epub/build_candidate.py')
     elif identity_path.exists() and json.loads(identity_path.read_text(encoding='utf-8')).get('candidate') is True:
         raise RuntimeError('候选程序不能作为正式包分发；重新构建正式程序并清除候选构建标记')
-    if args.iscc is None and list(DIST.glob('OpenNote-0.1.0-Windows-x64-Setup.exe')):
+    if args.iscc is None and list(DIST.glob(f'OpenNote-{VERSION}-Windows-x64-Setup.exe')):
         raise RuntimeError('已有安装包；必须用 --iscc 同步生成，或用 --source-only 明确仅更新源码')
     for name in ('opennote.exe', 'flutter_windows.dll', 'opennote_ocr.dll', 'opennote_onnxruntime.dll', 'opencv_world4110.dll'):
         if not (RELEASE / name).is_file():
@@ -202,7 +210,7 @@ def main() -> None:
         shutil.copyfile(source, RELEASE / source.name)
     collect_licenses()
     DIST.mkdir(parents=True, exist_ok=True)
-    archive_path = DIST / 'OpenNote-0.1.0-Windows-x64.zip'
+    archive_path = DIST / f'OpenNote-{VERSION}-Windows-x64.zip'
     inventory = []
     with zipfile.ZipFile(archive_path, 'w', zipfile.ZIP_DEFLATED, compresslevel=5) as archive:
         for source in sorted(RELEASE.rglob('*')):
@@ -214,11 +222,11 @@ def main() -> None:
             archive.write(source, f'OpenNote/{relative}')
             inventory.append({'path': relative, 'size': source.stat().st_size, 'sha256': digest(source)})
     if args.iscc:
-        subprocess.run([str(args.iscc), f'/DReleaseDir={RELEASE}', f'/DOutputDir={DIST}',
+        subprocess.run([str(args.iscc), f'/DReleaseDir={RELEASE}', f'/DOutputDir={DIST}', f'/DAppVersion={VERSION}',
                         *(['/DCandidate=1'] if args.candidate else []),
                         str(ROOT / 'packaging' / 'windows' / 'opennote.iss')], check=True)
     write_source_archive()
-    metadata = {'version': '0.1.0', 'candidate':args.candidate,'databaseVersion':11, 'files': inventory,
+    metadata = {'version': VERSION, 'candidate':args.candidate,'databaseVersion':11, 'files': inventory,
                 'artifacts': artifact_inventory()}
     (DIST / 'release-manifest.json').write_text(json.dumps(metadata, indent=2) + '\n', encoding='utf-8')
     print(json.dumps(metadata['artifacts'], indent=2), flush=True)

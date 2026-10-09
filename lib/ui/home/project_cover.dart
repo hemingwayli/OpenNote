@@ -271,26 +271,41 @@ class _ProjectCoverState extends State<ProjectCover> {
   }
 
   @override
-  Widget build(BuildContext context) => ColoredBox(
-    color: const Color(0xfff1f2f3),
-    child: Padding(
-      padding: const EdgeInsets.all(16),
-      child: FutureBuilder<Uint8List?>(
-        future: _future,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return _retry();
-          }
-          if (snapshot.data != null) {
-            return Image.memory(
-              snapshot.data!,
-              excludeFromSemantics: true,
-              fit: BoxFit.contain,
-              gaplessPlayback: true,
-              errorBuilder: (_, _, _) => _retry(corruptImage: true),
-            );
-          }
-          return Center(
+  Widget build(BuildContext context) => Align(
+    alignment: Alignment.bottomLeft,
+    child: FutureBuilder<Uint8List?>(
+      future: _future,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return _placeholder(_retry());
+        }
+        if (snapshot.data != null) {
+          return Image.memory(
+            snapshot.data!,
+            excludeFromSemantics: true,
+            fit: BoxFit.contain,
+            gaplessPlayback: true,
+            frameBuilder: (context, image, frame, synchronous) =>
+                frame == null && !synchronous
+                ? image
+                : DecoratedBox(
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color(0x18292c30),
+                          blurRadius: 10,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: image,
+                  ),
+            errorBuilder: (_, _, _) => _placeholder(_retry(corruptImage: true)),
+          );
+        }
+        return _placeholder(
+          Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -305,9 +320,21 @@ class _ProjectCoverState extends State<ProjectCover> {
                 ],
               ],
             ),
-          );
-        },
+          ),
+        );
+      },
+    ),
+  );
+
+  Widget _placeholder(Widget child) => AspectRatio(
+    aspectRatio: 2 / 3,
+    child: DecoratedBox(
+      decoration: BoxDecoration(
+        color: const Color(0xfff4f5f6),
+        borderRadius: BorderRadius.circular(2),
+        border: Border.all(color: const Color(0xffe7e8ea)),
       ),
+      child: child,
     ),
   );
 }

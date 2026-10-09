@@ -13,6 +13,7 @@ import 'package:opennote/engines/pdf/pdf_read_engine.dart';
 import 'package:opennote/ui/reader/reader_pane.dart';
 import 'package:opennote/ui/map/mind_map_pane.dart';
 import 'package:opennote/ui/theme/open_note_theme.dart';
+import 'package:opennote/ui/theme/open_note_view_switch.dart';
 import 'package:pdfrx/pdfrx.dart';
 
 void main() {
@@ -22,7 +23,212 @@ void main() {
         .absolute
         .path;
     await pdfrxInitialize();
+    if (Platform.environment['OPENNOTE_READER_OUTLINE_PREVIEW_DIR'] != null) {
+      final latin = FontLoader('Segoe UI')
+        ..addFont(
+          File('C:/Windows/Fonts/segoeui.ttf')
+              .readAsBytes()
+              .then(ByteData.sublistView),
+        );
+      final chinese = FontLoader('Source Han Sans CN');
+      for (final weight in ['Regular', 'Medium', 'Bold']) {
+        chinese.addFont(
+          rootBundle.load(
+            'assets/fonts/source-han-sans/SourceHanSansCN-$weight.otf',
+          ),
+        );
+      }
+      await latin.load();
+      await chinese.load();
+    }
   });
+
+  for (final ocr in [false, true]) {
+    testWidgets('排版折行：${ocr ? 'OCR' : '原生'}按钮、右键、拖入一致，复制和失败选区保留', (
+      tester,
+    ) async {
+      final excerpts = <SelectedExcerpt>[];
+      var drops = 0;
+      String? clipboard;
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (call) async {
+          if (call.method == 'Clipboard.setData') {
+            clipboard = (call.arguments as Map)['text'] as String;
+          }
+          return null;
+        },
+      );
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        ),
+      );
+      final directory = await tester.runAsync(
+        () => Directory.systemTemp.createTemp('opennote-excerpt-wrap-'),
+      );
+      final file = File('${directory!.path}/wrapped.pdf');
+      final first = '${List.filled(6, 'context ').join()}alpha';
+      final second = 'beta ${List.filled(6, 'context ').join()}'.trimRight();
+      const third = 'A short ending.';
+      await tester.runAsync(
+        () => file.writeAsBytes(
+          _outlinePdf(
+            contentOverride:
+                'BT /F1 12 Tf 40 700 Td ($first) Tj '
+                '0 -14 Td ($second) Tj 0 -14 Td ($third) Tj ET',
+          ),
+        ),
+      );
+      final text = [first, second, third].join('\n');
+      final fragments = <model.TextFragment>[];
+      var offset = 0;
+      for (var row = 0; row < 3; row++) {
+        final line = [first, second, third][row];
+        for (var index = 0; index < line.length; index++) {
+          fragments.add(
+            model.TextFragment(
+              start: offset + index,
+              length: 1,
+              order: fragments.length,
+              quad: model.PdfQuad.rect(
+                40 + index * 6,
+                690 - row * 14,
+                46 + index * 6,
+                702 - row * 14,
+              ),
+              precision: model.GeometryPrecision.approximateCharacter,
+            ),
+          );
+        }
+        offset += line.length + 1;
+      }
+      final ocrLayer = model.PageTextLayer(
+        id: 'ocr-wrap',
+        revisionId: 'interaction',
+        pageIndex: 0,
+        source: model.TextLayerSource.ocr,
+        text: text,
+        fragments: fragments,
+        engineVersion: 'fixture',
+        createdAt: DateTime.utc(2026),
+        parameters: const {'writingDirection': 'horizontalLtr'},
+      );
+      final session = await _mount(
+        tester,
+        ocr ? 'tools/fixtures/pdf/scanned.pdf' : file.path,
+        excerpts.add,
+        textLayers: ocr ? [ocrLayer] : const [],
+        waitForText: !ocr,
+        enableTextDrag: true,
+        outside: DragTarget<ReaderExcerptDrag>(
+          onWillAcceptWithDetails: (details) => details.data.canAccept,
+          onAcceptWithDetails: (details) async {
+            final drag = details.data;
+            if (!drag.claim()) return;
+            excerpts.add(await drag.prepare());
+            drops++;
+            if (drops == 1) {
+              drag.fail(StateError('模拟保存失败'));
+            } else {
+              drag.commit();
+            }
+          },
+          builder: (_, _, _) => const SizedBox.expand(),
+        ),
+      );
+      try {
+        final layer = ocr
+            ? model.TextLayerDraft(
+                revisionId: ocrLayer.revisionId,
+                pageIndex: 0,
+                source: ocrLayer.source,
+                text: text,
+                fragments: fragments,
+                engineVersion: 'fixture',
+                parameters: ocrLayer.parameters,
+              )
+            : session.layers[0]!;
+        final start = layer.text.indexOf('alpha');
+        final end = layer.text.indexOf('beta') + 4;
+        Offset character(int index) => _characterPosition(
+          tester,
+          session.viewer,
+          layer,
+          session.geometry[0],
+          index,
+        );
+        final gesture = await tester.startGesture(
+          character(start),
+          kind: PointerDeviceKind.mouse,
+        );
+        await gesture.moveTo(character(end - 1));
+        await tester.pump();
+        await gesture.up();
+        await tester.pump();
+        final raw = layer.text.substring(start, end);
+        expect(raw, contains('\n'));
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+        await tester.sendKeyEvent(LogicalKeyboardKey.keyC);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+        await tester.pump();
+        expect(clipboard, raw);
+        await tester.tap(find.byTooltip('摘录到顶层'));
+        await _until(tester, () => excerpts.length == 1);
+        expect(excerpts.single.text, 'alpha beta');
+        await tester.tapAt(
+          character(start + 2),
+          buttons: kSecondaryMouseButton,
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('摘录'));
+        await _until(tester, () => excerpts.length == 2);
+        for (var attempt = 0; attempt < 2; attempt++) {
+          final data = tester
+              .widget<Draggable<ReaderExcerptDrag>>(
+                find.byType(Draggable<ReaderExcerptDrag>).first,
+              )
+              .data!;
+          expect(data.text, raw, reason: '拖动校验继续使用原始选区');
+          final held = await tester.startGesture(
+            character(start + 2),
+            kind: PointerDeviceKind.mouse,
+          );
+          await held.moveBy(const Offset(24, 0));
+          await tester.pump();
+          await held.moveTo(const Offset(840, 340));
+          await held.up();
+          await _until(tester, () => drops == attempt + 1);
+          await tester.pumpAndSettle();
+          expect(
+            find.byKey(const Key('reader-selection-start')),
+            attempt == 0 ? findsOneWidget : findsNothing,
+          );
+        }
+        expect(excerpts, hasLength(4));
+        for (final excerpt in excerpts) {
+          expect(excerpt.text, 'alpha beta');
+          final anchor = excerpt.anchors.single;
+          expect(anchor.context, raw);
+          expect(anchor.textStart, start);
+          expect(anchor.textEnd, end);
+          expect(
+            anchor.quads.map((q) => q.toJson()),
+            excerpts.first.anchors.single.quads.map((q) => q.toJson()),
+          );
+          if (ocr) expect(anchor.textLayerId, 'ocr-wrap');
+        }
+        await session.controller.jumpToAnchors(excerpts.last.anchors);
+        await tester.pumpAndSettle();
+        expect(session.viewer.pageNumber, 1);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await _unmount(tester, session.controller);
+        await tester.runAsync(() => directory.delete(recursive: true));
+      }
+    });
+  }
 
   testWidgets('光标反馈：正文、空白、链接、移动平移和扫描页文字就绪', (tester) async {
     var session = await _mount(tester, 'tools/fixtures/pdf/links.pdf', (_) {});
@@ -1467,6 +1673,349 @@ void main() {
     }
   });
 
+  for (final manual in [false, true]) {
+    testWidgets('目录跳转：Fit 书签保持${manual ? '手动比例' : '宽度适配'}且即时定位', (
+      tester,
+    ) async {
+      final directory = Directory.systemTemp.createTempSync(
+        'opennote-outline-navigation-',
+      );
+      final file = File('${directory.path}/outline.pdf')
+        ..writeAsBytesSync(_outlinePdf());
+      final session = await _mount(
+        tester,
+        file.path,
+        (_) {},
+        initialPdfSettings: const model.PdfReadingSettings(
+          sidebarVisible: true,
+        ),
+      );
+      final observedZooms = <double>[];
+      void recordZoom() => observedZooms.add(session.viewer.currentZoom);
+      try {
+        await tester.tap(find.byTooltip('适合页面宽度'));
+        await tester.pumpAndSettle();
+        if (manual) {
+          await tester.tap(find.byTooltip('放大'));
+          await tester.pumpAndSettle();
+        }
+        final zoom = session.viewer.currentZoom;
+        final sidebarWidth = tester
+            .getSize(find.byKey(const Key('reader-sidebar')))
+            .width;
+        session.viewer.addListener(recordZoom);
+        await tester.tap(find.text('Child chapter'));
+        await tester.pumpAndSettle();
+        expect(session.viewer.pageNumber, 2);
+        expect(session.viewer.currentZoom, closeTo(zoom, .000001));
+        expect(observedZooms, isNotEmpty);
+        expect(
+          observedZooms.every((value) => (value - zoom).abs() < .000001),
+          isTrue,
+          reason: '目录跳转不能先缩小再恢复',
+        );
+        expect(
+          tester.getSize(find.byKey(const Key('reader-sidebar'))).width,
+          sidebarWidth,
+        );
+        final page = session.viewer.layout.pageLayouts[1];
+        expect(
+          session.viewer.documentToLocal(page.topCenter).dy,
+          closeTo(16, .01),
+        );
+        expect(tester.takeException(), isNull);
+      } finally {
+        session.viewer.removeListener(recordZoom);
+        await _unmount(tester, session.controller);
+        await tester.runAsync(() => directory.delete(recursive: true));
+      }
+    });
+  }
+
+  for (final destination in [
+    (name: '未知指令', value: '[4 0 R /Unrecognized]', x: null, y: 0.0),
+    (
+      name: '非有限坐标',
+      value: '[4 0 R /XYZ ${List.filled(400, '9').join()} 600 7]',
+      x: null,
+      y: 200.0,
+    ),
+    (name: 'XYZ 指定缩放', value: '[4 0 R /XYZ 120 600 7]', x: 120.0, y: 200.0),
+    (name: 'XYZ 空坐标', value: '[4 0 R /XYZ null null 7]', x: null, y: 0.0),
+    (name: 'XYZ 空横坐标', value: '[4 0 R /XYZ null 600 7]', x: null, y: 200.0),
+    (name: 'XYZ 越界坐标', value: '[4 0 R /XYZ -500 900 7]', x: 0.0, y: 0.0),
+    (name: 'XYZ 参数不足', value: '[4 0 R /XYZ 120]', x: null, y: 0.0),
+    (name: 'FitB', value: '[4 0 R /FitB]', x: null, y: 0.0),
+    (name: 'FitH', value: '[4 0 R /FitH 600]', x: null, y: 200.0),
+    (name: 'FitBH', value: '[4 0 R /FitBH 600]', x: null, y: 200.0),
+    (name: 'FitH 空坐标', value: '[4 0 R /FitH null]', x: null, y: 0.0),
+    (name: 'FitV', value: '[4 0 R /FitV 220]', x: 220.0, y: 0.0),
+    (name: 'FitBV', value: '[4 0 R /FitBV 220]', x: 220.0, y: 0.0),
+    (name: 'FitR', value: '[4 0 R /FitR 400 200 520 600]', x: 400.0, y: 200.0),
+    (name: 'FitR 参数不足', value: '[4 0 R /FitR 400 200]', x: null, y: 0.0),
+    (name: '命名目标', value: '(named-chapter)', x: null, y: 200.0),
+  ]) {
+    testWidgets('目录跳转：${destination.name}保留位置并忽略书签缩放', (tester) async {
+      final directory = Directory.systemTemp.createTempSync(
+        'opennote-outline-dest-',
+      );
+      final file = File('${directory.path}/outline.pdf')
+        ..writeAsBytesSync(_outlinePdf(childDestination: destination.value));
+      final positions = <model.ReadingPosition>[];
+      final session = await _mount(
+        tester,
+        file.path,
+        (_) {},
+        onReadingPositionChanged: positions.add,
+        initialPdfSettings: const model.PdfReadingSettings(
+          sidebarVisible: true,
+        ),
+      );
+      try {
+        await tester.tap(find.byTooltip('放大'));
+        await tester.pumpAndSettle();
+        final zoom = session.viewer.currentZoom;
+        await tester.tap(find.text('Child chapter'));
+        await tester.pumpAndSettle();
+        expect(session.viewer.pageNumber, 2);
+        expect(session.viewer.currentZoom, closeTo(zoom, .000001));
+        final page = session.viewer.layout.pageLayouts[1];
+        final target = Offset(
+          page.left + (destination.x ?? 300),
+          page.top + destination.y,
+        );
+        expect(session.viewer.documentToLocal(target).dy, closeTo(16, .01));
+        if (destination.x != null) {
+          expect(
+            session.viewer.documentToLocal(target).dx,
+            inInclusiveRange(15.99, session.viewer.viewSize.width - 15.99),
+          );
+        }
+        await tester.pump(const Duration(milliseconds: 400));
+        expect(positions.last.pageIndex, 1);
+        expect(
+          positions.last.offset,
+          closeTo((destination.y - 16 / zoom).clamp(0, 800) / 800, .00001),
+        );
+        expect(
+          tester
+              .widget<TextField>(find.byKey(const Key('reader-page-input')))
+              .controller!
+              .text,
+          '2',
+        );
+        expect(tester.takeException(), isNull);
+      } finally {
+        await _unmount(tester, session.controller);
+        await tester.runAsync(() => directory.delete(recursive: true));
+      }
+    });
+  }
+
+  for (final mode in ['width', 'page', 'manual']) {
+    testWidgets('目录跳转：$mode 模式跨不同页尺寸并保留后续适配', (tester) async {
+      final directory = Directory.systemTemp.createTempSync(
+        'opennote-outline-size-',
+      );
+      final file = File('${directory.path}/outline.pdf')
+        ..writeAsBytesSync(
+          _outlinePdf(secondPageGeometry: '/MediaBox [0 0 900 1100]'),
+        );
+      final session = await _mount(
+        tester,
+        file.path,
+        (_) {},
+        initialPdfSettings: const model.PdfReadingSettings(
+          sidebarVisible: true,
+        ),
+      );
+      try {
+        if (mode == 'page') {
+          await tester.tap(find.byTooltip('更多阅读工具'));
+          await tester.pumpAndSettle();
+          await tester.tap(find.text('适合整页'));
+        } else {
+          await tester.tap(find.byTooltip('适合页面宽度'));
+          if (mode == 'manual') await tester.tap(find.byTooltip('放大'));
+        }
+        await tester.pumpAndSettle();
+        final before = session.viewer.currentZoom;
+        await tester.tap(find.text('Child chapter'));
+        await tester.pumpAndSettle();
+        final targetZoom = session.viewer.currentZoom;
+        final page = session.viewer.layout.pageLayouts[1];
+        void expectMode() {
+          if (mode == 'manual') {
+            expect(session.viewer.currentZoom, closeTo(before, .000001));
+          } else if (mode == 'width') {
+            expect(
+              session.viewer.currentZoom,
+              closeTo(
+                (session.viewer.viewSize.width - 16) / page.width,
+                .000001,
+              ),
+            );
+            expect(
+              session.viewer.documentToLocal(page.center).dx,
+              closeTo(session.viewer.viewSize.width / 2, .01),
+            );
+          } else {
+            expect(
+              session.viewer.visibleRect.width,
+              greaterThanOrEqualTo(page.width),
+            );
+            expect(
+              session.viewer.visibleRect.height,
+              greaterThanOrEqualTo(page.height),
+            );
+          }
+        }
+
+        expect(session.viewer.pageNumber, 2);
+        expectMode();
+        await tester.drag(
+          find.byKey(const Key('reader-sidebar-divider')),
+          const Offset(80, 0),
+        );
+        await tester.pumpAndSettle();
+        expectMode();
+        await tester.tap(find.byTooltip('目录与缩略图'));
+        await tester.pumpAndSettle();
+        expectMode();
+        await tester.tap(find.byTooltip('目录与缩略图'));
+        await tester.pumpAndSettle();
+        expectMode();
+        await tester.binding.setSurfaceSize(const Size(800, 600));
+        await tester.pumpAndSettle();
+        expectMode();
+        if (mode == 'manual') expect(targetZoom, before);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await _unmount(tester, session.controller);
+        await tester.runAsync(() => directory.delete(recursive: true));
+      }
+    });
+  }
+
+  for (final rotation in [0, 90, 180, 270]) {
+    testWidgets('目录跳转：裁剪偏移与 $rotation 度旋转的标题位置', (tester) async {
+      final directory = Directory.systemTemp.createTempSync(
+        'opennote-outline-crop-',
+      );
+      final file = File('${directory.path}/outline.pdf')
+        ..writeAsBytesSync(
+          _outlinePdf(
+            childDestination: '[4 0 R /XYZ 200 650 7]',
+            secondPageGeometry:
+                '/MediaBox [0 0 700 900] /CropBox [50 100 650 850] /Rotate $rotation',
+            trailingPage: true,
+          ),
+        );
+      final session = await _mount(
+        tester,
+        file.path,
+        (_) {},
+        initialPdfSettings: const model.PdfReadingSettings(
+          sidebarVisible: true,
+        ),
+      );
+      try {
+        await tester.tap(find.byTooltip('放大'));
+        await tester.pumpAndSettle();
+        final zoom = session.viewer.currentZoom;
+        await tester.tap(find.text('Child chapter'));
+        await tester.pumpAndSettle();
+        // 原始点扣除页框偏移后是 (150, 550)，按四种旋转得到显示坐标。
+        final offset = switch (rotation) {
+          0 => const Offset(150, 200),
+          90 => const Offset(550, 150),
+          180 => const Offset(450, 550),
+          _ => const Offset(200, 450),
+        };
+        final page = session.viewer.layout.pageLayouts[1];
+        final point = session.viewer.documentToLocal(page.topLeft + offset);
+        expect(session.viewer.pageNumber, 2);
+        expect(session.viewer.currentZoom, closeTo(zoom, .000001));
+        expect(point.dy, closeTo(16, .01));
+        expect(
+          point.dx,
+          inInclusiveRange(15.99, session.viewer.viewSize.width - 15.99),
+        );
+        expect(tester.takeException(), isNull);
+      } finally {
+        await _unmount(tester, session.controller);
+        await tester.runAsync(() => directory.delete(recursive: true));
+      }
+    });
+  }
+
+  testWidgets('目录跳转：无目标与越界目标保留视口并反馈', (tester) async {
+    for (final destination in ['none', '[40 0 R /Fit]']) {
+      final directory = Directory.systemTemp.createTempSync(
+        'opennote-outline-invalid-',
+      );
+      final file = File('${directory.path}/outline.pdf')
+        ..writeAsBytesSync(_outlinePdf(childDestination: destination));
+      final session = await _mount(
+        tester,
+        file.path,
+        (_) {},
+        initialPdfSettings: const model.PdfReadingSettings(
+          sidebarVisible: true,
+        ),
+      );
+      try {
+        final before = session.viewer.value.clone();
+        await tester.tap(find.text('Child chapter'));
+        await tester.pumpAndSettle();
+        expect(session.viewer.value.storage, before.storage);
+        expect(find.text('此章节没有有效的跳转目标'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await _unmount(tester, session.controller);
+        await tester.runAsync(() => directory.delete(recursive: true));
+      }
+    }
+  });
+
+  testWidgets('目录跳转：抽屉关闭后最新请求生效，卸载阻止过期跳转', (tester) async {
+    final directory = Directory.systemTemp.createTempSync(
+      'opennote-outline-drawer-',
+    );
+    final file = File('${directory.path}/outline.pdf')
+      ..writeAsBytesSync(_outlinePdf());
+    final session = await _mount(tester, file.path, (_) {});
+    try {
+      await tester.binding.setSurfaceSize(const Size(640, 750));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('目录与缩略图'));
+      await tester.pumpAndSettle();
+      final callbacks = tester
+          .widgetList<ListTile>(find.byType(ListTile))
+          .where((tile) => tile.onTap != null)
+          .map((tile) => tile.onTap!)
+          .toList();
+      callbacks.first();
+      callbacks.last();
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('reader-sidebar')), findsNothing);
+      expect(session.viewer.pageNumber, 2);
+      final page = session.viewer.layout.pageLayouts[1];
+      expect(
+        session.viewer.currentZoom,
+        closeTo((session.viewer.viewSize.width - 16) / page.width, .000001),
+      );
+      await tester.tap(find.byTooltip('目录与缩略图'));
+      await tester.pumpAndSettle();
+      tester.widgetList<ListTile>(find.byType(ListTile)).first.onTap!();
+      await _unmount(tester, session.controller);
+      expect(tester.takeException(), isNull);
+    } finally {
+      await _unmount(tester, session.controller);
+      await tester.runAsync(() => directory.delete(recursive: true));
+    }
+  });
+
   testWidgets('目录适配：初次打开未手动缩放时，展开目录默认继续宽度适配', (tester) async {
     final session = await _mount(
       tester,
@@ -1640,6 +2189,247 @@ void main() {
       await _unmount(tester, session.controller);
     }
   });
+
+  testWidgets('目录批量操作：递归处理隐藏分支，禁用状态跟随单章节操作且不跳页', (tester) async {
+    final directory = Directory.systemTemp.createTempSync(
+      'opennote-reader-outline-bulk-',
+    );
+    final file = File('${directory.path}/outline.pdf')
+      ..writeAsBytesSync(_outlinePdf(extended: true));
+    final boundary = GlobalKey();
+    final session = await _mount(
+      tester,
+      file.path,
+      (_) {},
+      initialPdfSettings: const model.PdfReadingSettings(
+        sidebarVisible: true,
+        sidebarWidth: 320,
+      ),
+      theme: openNoteTheme(),
+      boundaryKey: boundary,
+    );
+    final expand = find.byKey(const Key('reader-outline-expand-all'));
+    final collapse = find.byKey(const Key('reader-outline-collapse-all'));
+    final footer = find.byKey(const Key('reader-outline-actions'));
+    void expectBottomActions() {
+      final sidebar = tester.getRect(find.byKey(const Key('reader-sidebar')));
+      expect(tester.getRect(footer).bottom, closeTo(sidebar.bottom, .01));
+      expect(tester.getRect(expand).bottom, closeTo(sidebar.bottom - 8, .01));
+      expect(tester.getRect(collapse).bottom, closeTo(sidebar.bottom - 8, .01));
+      expect(tester.getRect(expand).left, closeTo(sidebar.left + 8, .01));
+      expect(
+        tester.getRect(collapse).left,
+        closeTo(tester.getRect(expand).right + 4, .01),
+      );
+    }
+
+    try {
+      await tester.pumpAndSettle();
+      expect(find.text('Grandchild chapter'), findsOneWidget);
+      expect(find.text('Second child'), findsOneWidget);
+      expect(find.text('Top-level leaf'), findsOneWidget);
+      expect(tester.widget<IconButton>(expand).onPressed, isNull);
+      expect(tester.widget<IconButton>(collapse).onPressed, isNotNull);
+      expect(tester.getSize(expand), const Size(36, 36));
+      expect(tester.getSize(collapse), const Size(36, 36));
+      final switchRect = tester.getRect(find.byType(OpenNoteViewSwitch));
+      expect(
+        switchRect.width,
+        closeTo(
+          tester.getSize(find.byKey(const Key('reader-sidebar'))).width - 16,
+          .01,
+        ),
+      );
+      expectBottomActions();
+      await _saveOutlinePreview(tester, boundary, 'expanded-320');
+      final before = session.viewer.value.clone();
+      final page = session.viewer.pageNumber;
+      await tester.tap(collapse);
+      await tester.pumpAndSettle();
+      expect(find.text('Child chapter'), findsNothing);
+      expect(find.text('Grandchild chapter'), findsNothing);
+      expect(find.text('Second child'), findsNothing);
+      expect(find.text('Second chapter'), findsOneWidget);
+      expect(find.text('Top-level leaf'), findsOneWidget);
+      expect(tester.widget<IconButton>(collapse).onPressed, isNull);
+      expect(tester.widget<IconButton>(expand).onPressed, isNotNull);
+      expect(session.viewer.value, before);
+      expect(session.viewer.pageNumber, page);
+      await _saveOutlinePreview(tester, boundary, 'collapsed-320');
+
+      await tester.tap(find.byTooltip('展开章节').first);
+      await tester.pumpAndSettle();
+      expect(find.text('Child chapter'), findsOneWidget);
+      expect(
+        find.text('Grandchild chapter'),
+        findsNothing,
+        reason: '折叠全部也应折叠当时不可见的深层分支',
+      );
+      expect(tester.widget<IconButton>(expand).onPressed, isNotNull);
+      expect(tester.widget<IconButton>(collapse).onPressed, isNotNull);
+      await tester.tap(expand);
+      await tester.pumpAndSettle();
+      expect(find.text('Grandchild chapter'), findsOneWidget);
+      expect(find.text('Second child'), findsOneWidget);
+      expect(tester.widget<IconButton>(expand).onPressed, isNull);
+      expect(tester.widget<IconButton>(collapse).onPressed, isNotNull);
+      expect(session.viewer.value, before);
+      expect(session.viewer.pageNumber, page);
+
+      await tester.tap(find.byTooltip('折叠章节').at(1));
+      await tester.pumpAndSettle();
+      expect(find.text('Grandchild chapter'), findsNothing);
+      expect(tester.widget<IconButton>(expand).onPressed, isNotNull);
+      await tester.tap(find.byTooltip('展开章节').first);
+      await tester.pumpAndSettle();
+      expect(tester.widget<IconButton>(expand).onPressed, isNull);
+
+      final headerBefore = tester.getRect(find.byType(OpenNoteViewSwitch));
+      await tester.tap(find.text('缩略图'));
+      await tester.pumpAndSettle();
+      expect(expand, findsNothing);
+      expect(collapse, findsNothing);
+      expect(footer, findsNothing);
+      expect(tester.getRect(find.byType(OpenNoteViewSwitch)), headerBefore);
+      await _saveOutlinePreview(tester, boundary, 'thumbnails-320');
+      await tester.tap(find.text('目录'));
+      await tester.pumpAndSettle();
+      expect(find.text('Grandchild chapter'), findsOneWidget);
+      expect(tester.getRect(find.byType(OpenNoteViewSwitch)), headerBefore);
+      expect(tester.widget<IconButton>(expand).onPressed, isNull);
+
+      for (final width in [220.0, 120.0]) {
+        final sidebar = find.byKey(const Key('reader-sidebar'));
+        final resize = await tester.startGesture(
+          tester.getCenter(find.byKey(const Key('reader-sidebar-divider'))),
+          kind: PointerDeviceKind.mouse,
+        );
+        // 先越过拖动阈值，再按实际宽度调整，避免阈值吞掉测试位移。
+        await resize.moveBy(const Offset(-24, 0));
+        await tester.pump();
+        await resize.moveBy(Offset(width - tester.getSize(sidebar).width, 0));
+        await resize.up();
+        await tester.pumpAndSettle();
+        expect(tester.getSize(sidebar).width, closeTo(width, .01));
+        expectBottomActions();
+        expect(
+          tester.getRect(collapse).right,
+          lessThanOrEqualTo(tester.getRect(sidebar).right),
+        );
+        await _saveOutlinePreview(
+          tester,
+          boundary,
+          'expanded-${width.toInt()}',
+        );
+        expect(tester.takeException(), isNull);
+        if (width == 220) {
+          tester.platformDispatcher.textScaleFactorTestValue = 1.5;
+          addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+          await tester.pumpAndSettle();
+          expectBottomActions();
+          expect(tester.takeException(), isNull);
+          await _saveOutlinePreview(tester, boundary, 'expanded-220-text150');
+          tester.platformDispatcher.clearTextScaleFactorTestValue();
+          await tester.pumpAndSettle();
+        }
+      }
+      await tester.binding.setSurfaceSize(const Size(900, 280));
+      await tester.pumpAndSettle();
+      final footerBeforeScroll = tester.getRect(footer);
+      final outlineList = find.descendant(
+        of: find.byKey(const Key('reader-sidebar')),
+        matching: find.byType(ListView),
+      );
+      final scrollable = find.descendant(
+        of: outlineList,
+        matching: find.byType(Scrollable),
+      );
+      final scrollState = tester.state<ScrollableState>(scrollable);
+      final offsetBeforeScroll = scrollState.position.pixels;
+      await tester.drag(outlineList, const Offset(0, -160));
+      await tester.pumpAndSettle();
+      expect(scrollState.position.pixels, greaterThan(offsetBeforeScroll));
+      expect(
+        tester.getRect(footer),
+        footerBeforeScroll,
+        reason: '目录滚动时底部操作保持固定',
+      );
+      expectBottomActions();
+      await tester.binding.setSurfaceSize(const Size(640, 750));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('reader-sidebar-scrim')), findsOneWidget);
+      expect(find.byTooltip('关闭目录'), findsOneWidget);
+      expect(collapse.hitTestable(), findsOneWidget);
+      expectBottomActions();
+      await tester.tap(collapse);
+      await tester.pumpAndSettle();
+      expect(find.text('Child chapter'), findsNothing);
+      expect(
+        find.byKey(const Key('reader-sidebar')),
+        findsOneWidget,
+        reason: '批量目录操作应保留抽屉，不能触发章节跳转',
+      );
+      await _saveOutlinePreview(tester, boundary, 'drawer-220');
+      await tester.tap(find.byTooltip('关闭目录'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('reader-sidebar')), findsNothing);
+      expect(tester.takeException(), isNull);
+    } finally {
+      await _unmount(tester, session.controller);
+      await tester.runAsync(() => directory.delete(recursive: true));
+    }
+  });
+
+  for (final flat in [false, true]) {
+    testWidgets('目录批量操作：${flat ? '纯叶子目录' : '没有目录'}时隐藏图标', (tester) async {
+      final directory = Directory.systemTemp.createTempSync(
+        'opennote-reader-outline-empty-',
+      );
+      final file = File('${directory.path}/outline.pdf')
+        ..writeAsBytesSync(_outlinePdf(flat: flat, noOutline: !flat));
+      final session = await _mount(
+        tester,
+        file.path,
+        (_) {},
+        initialPdfSettings: const model.PdfReadingSettings(
+          sidebarVisible: true,
+        ),
+        theme: openNoteTheme(),
+      );
+      try {
+        await tester.pumpAndSettle();
+        if (flat) {
+          expect(find.byType(ListTile), findsOneWidget);
+          expect(find.byTooltip('展开章节'), findsNothing);
+          expect(find.byTooltip('折叠章节'), findsNothing);
+        } else {
+          expect(find.text('暂无目录'), findsOneWidget);
+        }
+        expect(
+          find.byKey(const Key('reader-outline-expand-all')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('reader-outline-collapse-all')),
+          findsNothing,
+        );
+        await tester.tap(find.text('缩略图'));
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(const Key('reader-outline-expand-all')),
+          findsNothing,
+        );
+        expect(
+          find.byKey(const Key('reader-outline-collapse-all')),
+          findsNothing,
+        );
+        expect(tester.takeException(), isNull);
+      } finally {
+        await _unmount(tester, session.controller);
+        await tester.runAsync(() => directory.delete(recursive: true));
+      }
+    });
+  }
 
   testWidgets('目录适配：窄栏目录使用抽屉，导航后收起并支持关闭按钮、遮罩和 Esc', (tester) async {
     final directory = Directory.systemTemp.createTempSync(
@@ -1869,6 +2659,7 @@ _mount(
   String path,
   void Function(SelectedExcerpt) onExcerpt, {
   void Function(int)? onReadingPageChanged,
+  void Function(model.ReadingPosition)? onReadingPositionChanged,
   void Function(int)? onIndexingRequested,
   model.ReadingPosition? initialPosition,
   model.PdfReadingSettings initialPdfSettings =
@@ -1880,7 +2671,10 @@ _mount(
   void Function(ReaderAnnotationDraft)? onAnnotationCreated,
   Widget? documentActions,
   bool enableTextDrag = false,
+  List<model.PageTextLayer> textLayers = const [],
   ValueNotifier<Object>? dragContext,
+  ThemeData? theme,
+  GlobalKey? boundaryKey,
 }) async {
   await tester.binding.setSurfaceSize(const Size(900, 750));
   addTearDown(() => tester.binding.setSurfaceSize(null));
@@ -1895,11 +2689,13 @@ _mount(
           filePath: File(path).absolute.path,
           controller: controller,
           onExcerpt: onExcerpt,
+          textLayers: textLayers,
           onAnnotationCreated: onAnnotationCreated,
           documentActions: documentActions,
           enableTextDrag: enableTextDrag,
           textDragContext: context,
           onReadingPageChanged: onReadingPageChanged,
+          onReadingPositionChanged: onReadingPositionChanged,
           onIndexingRequested: onIndexingRequested,
           initialPosition: initialPosition,
           initialPdfSettings: initialPdfSettings,
@@ -1913,13 +2709,17 @@ _mount(
   );
   await tester.pumpWidget(
     MaterialApp(
+      theme: theme,
       home: Scaffold(
-        body: dragContext == null
-            ? contents(null)
-            : ValueListenableBuilder<Object>(
-                valueListenable: dragContext,
-                builder: (_, value, _) => contents(value),
-              ),
+        body: RepaintBoundary(
+          key: boundaryKey,
+          child: dragContext == null
+              ? contents(null)
+              : ValueListenableBuilder<Object>(
+                  valueListenable: dragContext,
+                  builder: (_, value, _) => contents(value),
+                ),
+        ),
       ),
     ),
   );
@@ -2024,21 +2824,42 @@ Future<void> _unmount(
 }
 
 // 测试内生成带真实父子目录的最小 PDF，不改变共享基线资产。
-List<int> _outlinePdf() {
-  const content = 'BT /F1 24 Tf 72 700 Td (OpenNote reader controls) Tj ET';
+List<int> _outlinePdf({
+  bool extended = false,
+  bool flat = false,
+  bool noOutline = false,
+  String? contentOverride,
+  String childDestination = '[4 0 R /Fit]',
+  String secondPageGeometry = '/MediaBox [0 0 600 800]',
+  bool trailingPage = false,
+}) {
+  final content =
+      contentOverride ??
+      'BT /F1 24 Tf 72 700 Td (OpenNote reader controls) Tj ET';
   final title = '很长的中文章节标题，用于检查目录拖宽和完整标题提示'.codeUnits
       .map((c) => c.toRadixString(16).padLeft(4, '0'))
       .join();
   final objects = [
-    '<< /Type /Catalog /Pages 2 0 R /Outlines 5 0 R >>',
-    '<< /Type /Pages /Kids [3 0 R 4 0 R] /Count 2 >>',
+    '<< /Type /Catalog /Pages 2 0 R ${noOutline ? '' : '/Outlines 5 0 R'} /Dests << /named-chapter [4 0 R /XYZ null 600 7] >> >>',
+    '<< /Type /Pages /Kids [3 0 R 4 0 R ${trailingPage ? '${extended ? 14 : 10} 0 R' : ''}] /Count ${trailingPage ? 3 : 2} >>',
     '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 600 800] /Resources << /Font << /F1 6 0 R >> >> /Contents 7 0 R >>',
-    '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 600 800] /Resources << /Font << /F1 6 0 R >> >> /Contents 7 0 R >>',
-    '<< /Type /Outlines /First 8 0 R /Last 8 0 R /Count 2 >>',
+    '<< /Type /Page /Parent 2 0 R $secondPageGeometry /Resources << /Font << /F1 6 0 R >> >> /Contents 7 0 R >>',
+    '<< /Type /Outlines /First 8 0 R /Last ${extended ? 13 : 8} 0 R /Count ${extended
+        ? 6
+        : flat
+        ? 1
+        : 2} >>',
     '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',
     '<< /Length ${content.length} >>\nstream\n$content\nendstream',
-    '<< /Title <FEFF$title> /Parent 5 0 R /First 9 0 R /Last 9 0 R /Count 1 /Dest [3 0 R /Fit] >>',
-    '<< /Title (Child chapter) /Parent 8 0 R /Dest [4 0 R /Fit] >>',
+    '<< /Title <FEFF$title> /Parent 5 0 R ${extended ? '/Next 11 0 R' : ''} ${flat ? '' : '/First 9 0 R /Last 9 0 R /Count ${extended ? 2 : 1}'} /Dest [3 0 R /Fit] >>',
+    '<< /Title (Child chapter) /Parent 8 0 R ${extended ? '/First 10 0 R /Last 10 0 R /Count 1' : ''} ${childDestination == 'none' ? '' : '/Dest $childDestination'} >>',
+    if (extended) ...[
+      '<< /Title (Grandchild chapter) /Parent 9 0 R /Dest [4 0 R /Fit] >>',
+      '<< /Title (Second chapter) /Parent 5 0 R /Prev 8 0 R /Next 13 0 R /First 12 0 R /Last 12 0 R /Count 1 /Dest [3 0 R /Fit] >>',
+      '<< /Title (Second child) /Parent 11 0 R /Dest [4 0 R /Fit] >>',
+      '<< /Title (Top-level leaf) /Parent 5 0 R /Prev 11 0 R /Dest [3 0 R /Fit] >>',
+    ],
+    if (trailingPage) '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 600 800] /Resources << /Font << /F1 6 0 R >> >> /Contents 7 0 R >>',
   ];
   final buffer = StringBuffer('%PDF-1.4\n');
   final offsets = <int>[];
@@ -2055,4 +2876,28 @@ List<int> _outlinePdf() {
     'trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n$xref\n%%EOF\n',
   );
   return ascii.encode(buffer.toString());
+}
+
+Future<void> _saveOutlinePreview(
+  WidgetTester tester,
+  GlobalKey boundaryKey,
+  String name,
+) async {
+  final output = Platform.environment['OPENNOTE_READER_OUTLINE_PREVIEW_DIR'];
+  if (output == null) return;
+  final boundary =
+      boundaryKey.currentContext!.findRenderObject()! as RenderRepaintBoundary;
+  final image = (await tester.runAsync(() => boundary.toImage(pixelRatio: 1)))!;
+  try {
+    final data = (await tester.runAsync(
+      () => image.toByteData(format: ui.ImageByteFormat.png),
+    ))!;
+    await tester.runAsync(() async {
+      final file = File('$output/$name.png');
+      await file.parent.create(recursive: true);
+      await file.writeAsBytes(data.buffer.asUint8List());
+    });
+  } finally {
+    image.dispose();
+  }
 }
